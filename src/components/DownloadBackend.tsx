@@ -124,7 +124,7 @@ export const DownloadBackend: React.FC = () => {
     <Button
       onClick={handleDownload}
       disabled={loading}
-      className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
+      className="bg-white text-black hover:bg-white/90 font-semibold gap-2 shadow-lg shadow-white/10 border border-white/20"
     >
       <Download className="w-4 h-4" />
       Download Backend (ZIP)

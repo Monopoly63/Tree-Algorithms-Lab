@@ -22,6 +22,11 @@
 - [x] Replace Index.tsx with main app with tabs + header
 - [x] Run lint & build
 - [x] CheckUI
+- [x] v2: Full blur/glass black-gray-white theme
+- [x] v2: Manual tree drawing in TreeBuilder (Auto/Manual modes)
+- [x] v2: Manual m-ary drawing in MAryConverter (Draw/JSON modes)
+- [x] v2: Step indicator flow in m-ary converter
+- [x] v2: Professional numbered step tabs with icons
 
 ## Files
 - src/lib/tree.ts - core tree types + algorithms
