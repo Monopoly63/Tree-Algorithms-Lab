@@ -1,13 +1,9 @@
-// Tree Algorithms Lab - Tab 1: Tree Builder (with Manual Drawing mode)
+// Tree Algorithms Lab - Tab 1: Tree Builder (Pure Black/White Glass)
 // Student: Abdulmoin Hablas | Course: Algorithms 3
 import React, { useState } from "react";
 import { buildBT, buildBST, TreeNode, genId } from "@/lib/tree";
 import { layoutBinaryTree } from "@/lib/layout";
 import { TreeCanvas } from "@/components/TreeCanvas";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Plus, Trash2, Pencil, Wand2, Hand } from "lucide-react";
 
 interface Props {
@@ -15,7 +11,6 @@ interface Props {
   currentTree: TreeNode | null;
 }
 
-// ---- helpers for manual binary tree editing ----
 function cloneTree(n: TreeNode | null): TreeNode | null {
   if (!n) return null;
   return {
@@ -55,7 +50,6 @@ export const TreeBuilder: React.FC<Props> = ({ onTreeBuilt, currentTree }) => {
   const [type, setType] = useState<"BT" | "BST">("BST");
   const [error, setError] = useState<string | null>(null);
 
-  // Manual mode state
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [nodeValue, setNodeValue] = useState("");
 
@@ -83,7 +77,6 @@ export const TreeBuilder: React.FC<Props> = ({ onTreeBuilt, currentTree }) => {
     }
   };
 
-  // ---- Manual mode actions ----
   const makeNode = (val: string): TreeNode => ({
     id: genId(),
     value: val,
@@ -153,160 +146,211 @@ export const TreeBuilder: React.FC<Props> = ({ onTreeBuilt, currentTree }) => {
       <div className="lg:col-span-1 glass-card p-5 space-y-5">
         <div>
           <h2 className="text-base font-semibold text-white tracking-wide">Tree Builder</h2>
-          <p className="text-xs text-white/50 mt-1">
+          <p className="text-xs text-[#a0a0a0] mt-1">
             Build automatically from a list, or draw manually node by node.
           </p>
         </div>
 
         {/* Mode switcher */}
-        <div className="flex gap-1 p-1 rounded-lg bg-white/5 border border-white/10">
+        <div className="glass-tabs flex gap-1">
           <button
             onClick={() => setMode("auto")}
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-semibold transition-all ${
-              mode === "auto"
-                ? "bg-white text-black shadow"
-                : "text-white/60 hover:text-white"
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-[10px] text-xs font-semibold transition-all ${
+              mode === "auto" ? "glass-tab-active" : "text-[#666666] hover:text-white"
             }`}
           >
-            <Wand2 className="w-3.5 h-3.5" /> Auto
+            <Wand2 className="w-3.5 h-3.5" strokeWidth={1.5} /> Auto
           </button>
           <button
             onClick={() => setMode("manual")}
-            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-semibold transition-all ${
-              mode === "manual"
-                ? "bg-white text-black shadow"
-                : "text-white/60 hover:text-white"
+            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-[10px] text-xs font-semibold transition-all ${
+              mode === "manual" ? "glass-tab-active" : "text-[#666666] hover:text-white"
             }`}
           >
-            <Hand className="w-3.5 h-3.5" /> Manual
+            <Hand className="w-3.5 h-3.5" strokeWidth={1.5} /> Manual
           </button>
         </div>
 
         {mode === "auto" ? (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="values" className="text-white/80 text-xs uppercase tracking-wider">
+              <label
+                htmlFor="values"
+                className="text-[#a0a0a0] text-[10px] uppercase block"
+                style={{ letterSpacing: "0.15em" }}
+              >
                 Values (comma-separated)
-              </Label>
-              <Input
+              </label>
+              <input
                 id="values"
+                type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="10,5,15,3,7"
-                className="bg-black/40 border-white/15 text-white placeholder:text-white/30"
+                className="glass-input w-full px-3 py-2.5 text-sm"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-white/80 text-xs uppercase tracking-wider">Tree Type</Label>
-              <RadioGroup value={type} onValueChange={(v) => setType(v as "BT" | "BST")}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="BT" id="bt" className="border-white/40 text-white" />
-                  <Label htmlFor="bt" className="text-white/90 text-sm">
-                    Binary Tree (BT)
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="BST" id="bst" className="border-white/40 text-white" />
-                  <Label htmlFor="bst" className="text-white/90 text-sm">
-                    Binary Search Tree (BST)
-                  </Label>
-                </div>
-              </RadioGroup>
+              <label
+                className="text-[#a0a0a0] text-[10px] uppercase block"
+                style={{ letterSpacing: "0.15em" }}
+              >
+                Tree Type
+              </label>
+              <div className="flex flex-col gap-2">
+                <label className="flex items-center gap-2.5 cursor-pointer group">
+                  <span
+                    className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                      type === "BT"
+                        ? "border-white/60 bg-white/10"
+                        : "border-white/20 group-hover:border-white/40"
+                    }`}
+                  >
+                    {type === "BT" && (
+                      <span className="w-2 h-2 rounded-full bg-white"></span>
+                    )}
+                  </span>
+                  <input
+                    type="radio"
+                    name="treetype"
+                    value="BT"
+                    checked={type === "BT"}
+                    onChange={() => setType("BT")}
+                    className="sr-only"
+                  />
+                  <span className="text-white/90 text-sm">Binary Tree (BT)</span>
+                </label>
+                <label className="flex items-center gap-2.5 cursor-pointer group">
+                  <span
+                    className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                      type === "BST"
+                        ? "border-white/60 bg-white/10"
+                        : "border-white/20 group-hover:border-white/40"
+                    }`}
+                  >
+                    {type === "BST" && (
+                      <span className="w-2 h-2 rounded-full bg-white"></span>
+                    )}
+                  </span>
+                  <input
+                    type="radio"
+                    name="treetype"
+                    value="BST"
+                    checked={type === "BST"}
+                    onChange={() => setType("BST")}
+                    className="sr-only"
+                  />
+                  <span className="text-white/90 text-sm">Binary Search Tree (BST)</span>
+                </label>
+              </div>
             </div>
-            <Button
+            <button
               onClick={handleAutoBuild}
-              className="w-full bg-white text-black hover:bg-white/90 font-semibold"
+              className="glass-btn w-full px-4 py-2.5 text-sm font-semibold"
             >
               Build Tree
-            </Button>
-            {error && <div className="text-red-400 text-xs">{error}</div>}
+            </button>
+            {error && <div className="text-[#a0a0a0] text-xs italic">{error}</div>}
           </div>
         ) : (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-white/80 text-xs uppercase tracking-wider">
+              <label
+                className="text-[#a0a0a0] text-[10px] uppercase block"
+                style={{ letterSpacing: "0.15em" }}
+              >
                 Node Value
-              </Label>
-              <Input
+              </label>
+              <input
+                type="text"
                 value={nodeValue}
                 onChange={(e) => setNodeValue(e.target.value)}
                 placeholder="Enter value…"
-                className="bg-black/40 border-white/15 text-white placeholder:text-white/30"
+                className="glass-input w-full px-3 py-2.5 text-sm"
               />
             </div>
 
             {!currentTree ? (
-              <Button
+              <button
                 onClick={handleAddRoot}
-                className="w-full bg-white text-black hover:bg-white/90 font-semibold gap-2"
+                className="glass-btn w-full px-4 py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2"
               >
-                <Plus className="w-4 h-4" /> Add Root Node
-              </Button>
+                <Plus className="w-4 h-4" strokeWidth={1.5} /> Add Root Node
+              </button>
             ) : (
               <>
-                <div className="rounded-lg bg-white/5 border border-white/10 p-3 text-xs">
+                <div className="glass-output p-3 text-xs">
                   {selectedId ? (
-                    <span className="text-white/80">
+                    <span className="text-white/90">
                       Selected: <span className="font-mono text-white">node</span>
                     </span>
                   ) : (
-                    <span className="text-white/50">Click any node in the canvas to select.</span>
+                    <span className="text-[#555555]">
+                      Click any node in the canvas to select.
+                    </span>
                   )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
-                  <Button
+                  <button
                     disabled={!selectedId}
                     onClick={() => handleAddChild("left")}
-                    className="bg-white/10 hover:bg-white/20 text-white border border-white/15 gap-1 text-xs"
+                    className="glass-btn px-3 py-2 text-xs font-semibold inline-flex items-center justify-center gap-1"
                   >
-                    <Plus className="w-3.5 h-3.5" /> Left
-                  </Button>
-                  <Button
+                    <Plus className="w-3.5 h-3.5" strokeWidth={1.5} /> Left
+                  </button>
+                  <button
                     disabled={!selectedId}
                     onClick={() => handleAddChild("right")}
-                    className="bg-white/10 hover:bg-white/20 text-white border border-white/15 gap-1 text-xs"
+                    className="glass-btn px-3 py-2 text-xs font-semibold inline-flex items-center justify-center gap-1"
                   >
-                    <Plus className="w-3.5 h-3.5" /> Right
-                  </Button>
+                    <Plus className="w-3.5 h-3.5" strokeWidth={1.5} /> Right
+                  </button>
                 </div>
-                <Button
+                <button
                   disabled={!selectedId || !nodeValue.trim()}
                   onClick={handleRename}
-                  className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/15 gap-2 text-xs"
+                  className="glass-btn w-full px-3 py-2 text-xs font-semibold inline-flex items-center justify-center gap-2"
                 >
-                  <Pencil className="w-3.5 h-3.5" /> Rename selected
-                </Button>
-                <Button
+                  <Pencil className="w-3.5 h-3.5" strokeWidth={1.5} /> Rename selected
+                </button>
+                <button
                   disabled={!selectedId}
                   onClick={handleDelete}
-                  variant="outline"
-                  className="w-full !bg-transparent hover:!bg-red-500/10 border-red-500/40 text-red-300 gap-2 text-xs"
+                  className="glass-btn w-full px-3 py-2 text-xs font-semibold inline-flex items-center justify-center gap-2"
                 >
-                  <Trash2 className="w-3.5 h-3.5" /> Delete subtree
-                </Button>
-                <Button
+                  <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} /> Delete subtree
+                </button>
+                <button
                   onClick={handleClear}
-                  variant="outline"
-                  className="w-full !bg-transparent hover:!bg-white/5 border-white/15 text-white/70 text-xs"
+                  className="glass-btn w-full px-3 py-2 text-xs font-semibold"
                 >
                   Clear Canvas
-                </Button>
+                </button>
               </>
             )}
           </div>
         )}
 
-        <div className="text-[11px] text-white/40 pt-3 border-t border-white/10">
-          Tip: After building a tree, switch to <span className="text-white/70">Traversal
-          Visualizer</span> to animate it.
+        <div
+          className="text-[11px] text-[#555555] pt-3 border-t"
+          style={{ borderColor: "rgba(255,255,255,0.08)" }}
+        >
+          Tip: After building a tree, switch to{" "}
+          <span className="text-[#a0a0a0]">Traversal Visualizer</span> to animate it.
         </div>
       </div>
 
       <div className="lg:col-span-2">
         <TreeCanvas
           layout={layout}
-          title={currentTree ? (mode === "manual" ? "Manual Canvas" : `${type} Visualization`) : "Canvas"}
+          title={
+            currentTree
+              ? mode === "manual"
+                ? "Manual Canvas"
+                : `${type} Visualization`
+              : "Canvas"
+          }
           selectedId={selectedId}
           onNodeClick={mode === "manual" ? (id) => setSelectedId(id) : undefined}
           emptyHint={

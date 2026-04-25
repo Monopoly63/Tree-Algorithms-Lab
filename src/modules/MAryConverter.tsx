@@ -1,4 +1,4 @@
-// Tree Algorithms Lab - Tab 2: m-ary -> BT -> BST (interactive + step flow)
+// Tree Algorithms Lab - Tab 2: m-ary -> BT -> BST (Pure Black/White Glass)
 // Student: Abdulmoin Hablas | Course: Algorithms 3
 import React, { useMemo, useState } from "react";
 import {
@@ -11,10 +11,6 @@ import {
 } from "@/lib/tree";
 import { layoutMaryTree, layoutBinaryTree } from "@/lib/layout";
 import { TreeCanvas } from "@/components/TreeCanvas";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Plus,
   Trash2,
@@ -25,7 +21,6 @@ import {
   Play,
 } from "lucide-react";
 
-// --- Helpers ---
 function cloneMary(n: MaryNode | null): MaryNode | null {
   if (!n) return null;
   return {
@@ -109,7 +104,6 @@ export const MAryConverter: React.FC = () => {
     resetConversion();
   };
 
-  // Manual actions
   const handleAddRoot = () => {
     const v = nodeValue.trim() || "A";
     updateMary({ id: genId("m"), value: v, children: [] });
@@ -209,24 +203,30 @@ export const MAryConverter: React.FC = () => {
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border transition-all ${
                     s.done
-                      ? "bg-white text-black border-white shadow-lg shadow-white/20"
+                      ? "bg-white/20 text-white border-white/50"
                       : s.active
-                      ? "bg-white/10 text-white border-white/40"
-                      : "bg-transparent text-white/40 border-white/15"
+                      ? "bg-white/8 text-white border-white/25"
+                      : "bg-transparent text-[#555555] border-white/10"
                   }`}
+                  style={
+                    s.done
+                      ? { boxShadow: "0 0 16px rgba(255,255,255,0.15)" }
+                      : undefined
+                  }
                 >
                   {s.n}
                 </div>
                 <div
-                  className={`text-xs font-semibold uppercase tracking-wider ${
-                    s.done ? "text-white" : "text-white/50"
+                  className={`text-[11px] font-semibold uppercase ${
+                    s.done ? "text-white" : "text-[#a0a0a0]"
                   }`}
+                  style={{ letterSpacing: "0.15em" }}
                 >
                   {s.label}
                 </div>
               </div>
               {i < arr.length - 1 && (
-                <ArrowRight className="w-4 h-4 text-white/25" />
+                <ArrowRight className="w-4 h-4 text-white/20" />
               )}
             </React.Fragment>
           ))}
@@ -238,133 +238,137 @@ export const MAryConverter: React.FC = () => {
         <div className="lg:col-span-1 glass-card p-5 space-y-5">
           <div>
             <h2 className="text-base font-semibold text-white">m-ary Builder</h2>
-            <p className="text-xs text-white/50 mt-1">
+            <p className="text-xs text-[#a0a0a0] mt-1">
               Draw an m-ary tree visually or paste JSON, then convert.
             </p>
           </div>
 
-          <div className="flex gap-1 p-1 rounded-lg bg-white/5 border border-white/10">
+          <div className="glass-tabs flex gap-1">
             <button
               onClick={() => setMode("draw")}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-semibold transition-all ${
-                mode === "draw"
-                  ? "bg-white text-black shadow"
-                  : "text-white/60 hover:text-white"
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-[10px] text-xs font-semibold transition-all ${
+                mode === "draw" ? "glass-tab-active" : "text-[#666666] hover:text-white"
               }`}
             >
-              <MousePointerClick className="w-3.5 h-3.5" /> Draw
+              <MousePointerClick className="w-3.5 h-3.5" strokeWidth={1.5} /> Draw
             </button>
             <button
               onClick={() => setMode("json")}
-              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-semibold transition-all ${
-                mode === "json"
-                  ? "bg-white text-black shadow"
-                  : "text-white/60 hover:text-white"
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-[10px] text-xs font-semibold transition-all ${
+                mode === "json" ? "glass-tab-active" : "text-[#666666] hover:text-white"
               }`}
             >
-              <Code2 className="w-3.5 h-3.5" /> JSON
+              <Code2 className="w-3.5 h-3.5" strokeWidth={1.5} /> JSON
             </button>
           </div>
 
           {mode === "draw" ? (
             <div className="space-y-3">
               <div className="space-y-2">
-                <Label className="text-white/80 text-xs uppercase tracking-wider">
+                <label
+                  className="text-[#a0a0a0] text-[10px] uppercase block"
+                  style={{ letterSpacing: "0.15em" }}
+                >
                   Node Value
-                </Label>
-                <Input
+                </label>
+                <input
+                  type="text"
                   value={nodeValue}
                   onChange={(e) => setNodeValue(e.target.value)}
                   placeholder="e.g. A, B, 5…"
-                  className="bg-black/40 border-white/15 text-white placeholder:text-white/30"
+                  className="glass-input w-full px-3 py-2.5 text-sm"
                 />
               </div>
 
               {!mary ? (
-                <Button
+                <button
                   onClick={handleAddRoot}
-                  className="w-full bg-white text-black hover:bg-white/90 font-semibold gap-2"
+                  className="glass-btn w-full px-4 py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2"
                 >
-                  <Plus className="w-4 h-4" /> Add Root
-                </Button>
+                  <Plus className="w-4 h-4" strokeWidth={1.5} /> Add Root
+                </button>
               ) : (
                 <>
-                  <div className="rounded-lg bg-white/5 border border-white/10 p-3 text-xs">
+                  <div className="glass-output p-3 text-xs">
                     {selectedId ? (
-                      <span className="text-white/80">
+                      <span className="text-white/90">
                         Selected node · click others or add child
                       </span>
                     ) : (
-                      <span className="text-white/50">
+                      <span className="text-[#555555]">
                         Click any node in the canvas to select it.
                       </span>
                     )}
                   </div>
-                  <Button
+                  <button
                     disabled={!selectedId}
                     onClick={handleAddChild}
-                    className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/15 gap-2 text-xs"
+                    className="glass-btn w-full px-3 py-2 text-xs font-semibold inline-flex items-center justify-center gap-2"
                   >
-                    <Plus className="w-3.5 h-3.5" /> Add Child to Selected
-                  </Button>
-                  <Button
+                    <Plus className="w-3.5 h-3.5" strokeWidth={1.5} /> Add Child to Selected
+                  </button>
+                  <button
                     disabled={!selectedId || !nodeValue.trim()}
                     onClick={handleRename}
-                    className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/15 gap-2 text-xs"
+                    className="glass-btn w-full px-3 py-2 text-xs font-semibold inline-flex items-center justify-center gap-2"
                   >
-                    <Pencil className="w-3.5 h-3.5" /> Rename
-                  </Button>
-                  <Button
+                    <Pencil className="w-3.5 h-3.5" strokeWidth={1.5} /> Rename
+                  </button>
+                  <button
                     disabled={!selectedId}
                     onClick={handleDelete}
-                    variant="outline"
-                    className="w-full !bg-transparent hover:!bg-red-500/10 border-red-500/40 text-red-300 gap-2 text-xs"
+                    className="glass-btn w-full px-3 py-2 text-xs font-semibold inline-flex items-center justify-center gap-2"
                   >
-                    <Trash2 className="w-3.5 h-3.5" /> Delete subtree
-                  </Button>
-                  <Button
+                    <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} /> Delete subtree
+                  </button>
+                  <button
                     onClick={() => {
                       updateMary(null);
                       setSelectedId(null);
                     }}
-                    variant="outline"
-                    className="w-full !bg-transparent hover:!bg-white/5 border-white/15 text-white/70 text-xs"
+                    className="glass-btn w-full px-3 py-2 text-xs font-semibold"
                   >
                     Clear Canvas
-                  </Button>
+                  </button>
                 </>
               )}
             </div>
           ) : (
             <div className="space-y-3">
-              <Label className="text-white/80 text-xs uppercase tracking-wider">
+              <label
+                className="text-[#a0a0a0] text-[10px] uppercase block"
+                style={{ letterSpacing: "0.15em" }}
+              >
                 m-ary JSON
-              </Label>
-              <Textarea
+              </label>
+              <textarea
                 value={jsonInput}
                 onChange={(e) => setJsonInput(e.target.value)}
                 rows={10}
-                className="bg-black/40 border-white/15 text-white placeholder:text-white/30 font-mono text-xs"
+                className="glass-input w-full px-3 py-2.5 font-mono text-xs resize-y"
               />
-              <Button
+              <button
                 onClick={handleLoadJson}
-                className="w-full bg-white/10 hover:bg-white/20 text-white border border-white/15 font-semibold"
+                className="glass-btn w-full px-4 py-2.5 text-sm font-semibold"
               >
                 Load JSON
-              </Button>
+              </button>
             </div>
           )}
 
-          <div className="pt-3 border-t border-white/10">
-            <Button
+          <div
+            className="pt-3 border-t"
+            style={{ borderColor: "rgba(255,255,255,0.08)" }}
+          >
+            <button
               onClick={handleConvert}
               disabled={!mary}
-              className="w-full bg-white text-black hover:bg-white/90 font-semibold gap-2"
+              className="glass-btn w-full px-4 py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2"
             >
-              <Play className="w-4 h-4" /> Run Conversion
-            </Button>
-            {error && <div className="text-red-400 text-xs mt-2">{error}</div>}
-            <div className="text-[11px] text-white/40 mt-3">
+              <Play className="w-4 h-4" strokeWidth={1.5} /> Run Conversion
+            </button>
+            {error && <div className="text-[#a0a0a0] text-xs mt-2 italic">{error}</div>}
+            <div className="text-[11px] text-[#555555] mt-3">
               Algorithm: Left-Child Right-Sibling → inorder → sort → rebuild BST
             </div>
           </div>
@@ -392,14 +396,17 @@ export const MAryConverter: React.FC = () => {
       {converted && (
         <div className="grid md:grid-cols-2 gap-4 animate-fade-in-up">
           <div className="glass-card p-4">
-            <div className="text-[11px] uppercase tracking-wider text-white/50 mb-2">
+            <div
+              className="text-[10px] uppercase text-[#555555] mb-3"
+              style={{ letterSpacing: "0.2em" }}
+            >
               Inorder BEFORE (of BT)
             </div>
             <div className="flex flex-wrap gap-2">
               {beforeList.map((v, i) => (
                 <span
                   key={i}
-                  className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-white/90 font-mono text-xs"
+                  className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-[#e0e0e0] font-mono text-xs"
                 >
                   {v}
                 </span>
@@ -407,14 +414,18 @@ export const MAryConverter: React.FC = () => {
             </div>
           </div>
           <div className="glass-card p-4">
-            <div className="text-[11px] uppercase tracking-wider text-white/50 mb-2">
+            <div
+              className="text-[10px] uppercase text-[#555555] mb-3"
+              style={{ letterSpacing: "0.2em" }}
+            >
               Inorder AFTER (of BST)
             </div>
             <div className="flex flex-wrap gap-2">
               {afterList.map((v, i) => (
                 <span
                   key={i}
-                  className="px-2.5 py-1 rounded-md bg-white text-black font-mono text-xs font-semibold"
+                  className="px-2.5 py-1 rounded-md bg-white/20 border border-white/50 text-white font-mono text-xs font-semibold"
+                  style={{ boxShadow: "0 0 12px rgba(255,255,255,0.12)" }}
                 >
                   {v}
                 </span>

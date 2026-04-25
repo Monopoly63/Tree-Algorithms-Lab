@@ -1,7 +1,6 @@
-// Tree Algorithms Lab - Download Backend as ZIP
+// Tree Algorithms Lab - Download Backend as ZIP (Pure Glass)
 // Student: Abdulmoin Hablas | Course: Algorithms 3
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { BACKEND_FILES } from "@/lib/backendFiles";
 import { Download } from "lucide-react";
 
@@ -39,18 +38,17 @@ function buildZip(files: Record<string, string>): Uint8Array {
     const crc = crc32(data);
     const entryOffset = offset;
 
-    // Local file header
     writeUInt32LE(localParts, 0x04034b50);
-    writeUInt16LE(localParts, 20); // version
-    writeUInt16LE(localParts, 0); // flags
-    writeUInt16LE(localParts, 0); // method = store
-    writeUInt16LE(localParts, 0); // time
-    writeUInt16LE(localParts, 0); // date
+    writeUInt16LE(localParts, 20);
+    writeUInt16LE(localParts, 0);
+    writeUInt16LE(localParts, 0);
+    writeUInt16LE(localParts, 0);
+    writeUInt16LE(localParts, 0);
     writeUInt32LE(localParts, crc);
-    writeUInt32LE(localParts, data.length); // compressed
-    writeUInt32LE(localParts, data.length); // uncompressed
+    writeUInt32LE(localParts, data.length);
+    writeUInt32LE(localParts, data.length);
     writeUInt16LE(localParts, nameBytes.length);
-    writeUInt16LE(localParts, 0); // extra
+    writeUInt16LE(localParts, 0);
     for (const b of nameBytes) localParts.push(b);
     for (const b of data) localParts.push(b);
     offset = localParts.length;
@@ -62,8 +60,8 @@ function buildZip(files: Record<string, string>): Uint8Array {
   for (const e of entries) {
     const nameBytes = encoder.encode(e.name);
     writeUInt32LE(centralParts, 0x02014b50);
-    writeUInt16LE(centralParts, 20); // version made by
-    writeUInt16LE(centralParts, 20); // version needed
+    writeUInt16LE(centralParts, 20);
+    writeUInt16LE(centralParts, 20);
     writeUInt16LE(centralParts, 0);
     writeUInt16LE(centralParts, 0);
     writeUInt16LE(centralParts, 0);
@@ -121,13 +119,14 @@ export const DownloadBackend: React.FC = () => {
   };
 
   return (
-    <Button
+    <button
       onClick={handleDownload}
       disabled={loading}
-      className="bg-white text-black hover:bg-white/90 font-semibold gap-2 shadow-lg shadow-white/10 border border-white/20"
+      className="glass-btn inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold tracking-wide"
     >
-      <Download className="w-4 h-4" />
-      Download Backend (ZIP)
-    </Button>
+      <Download className="w-4 h-4" strokeWidth={1.5} />
+      <span className="hidden sm:inline">Download Backend (ZIP)</span>
+      <span className="sm:hidden">Backend ZIP</span>
+    </button>
   );
 };
