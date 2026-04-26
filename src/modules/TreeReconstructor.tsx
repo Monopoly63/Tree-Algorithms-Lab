@@ -16,8 +16,8 @@ type Mode = "pre-in" | "post-in";
 
 export const TreeReconstructor: React.FC = () => {
   const [mode, setMode] = useState<Mode>("pre-in");
-  const [firstInput, setFirstInput] = useState("1, 2, 4, 5, 3, 6, 7");
-  const [inorderInput, setInorderInput] = useState("4, 2, 5, 1, 6, 3, 7");
+  const [firstInput, setFirstInput] = useState("4, 2, 1, 3, 6, 5, 7");
+  const [inorderInput, setInorderInput] = useState("1, 2, 3, 4, 5, 6, 7");
   const [tree, setTree] = useState<TreeNode | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -38,6 +38,13 @@ export const TreeReconstructor: React.FC = () => {
       const inorderTokens = parseTokens(inorderInput);
       if (firstTokens.length === 0 || inorderTokens.length === 0) {
         setError("Please provide both traversals with at least one value each.");
+        setTree(null);
+        return;
+      }
+      if (!isSortedAscending(inorderTokens)) {
+        setError(
+          "For a BST, the inorder traversal must be sorted in ascending order. Please fix the inorder input."
+        );
         setTree(null);
         return;
       }
@@ -73,16 +80,32 @@ export const TreeReconstructor: React.FC = () => {
 
   const loadExample = () => {
     if (mode === "pre-in") {
-      setFirstInput("1, 2, 4, 5, 3, 6, 7");
-      setInorderInput("4, 2, 5, 1, 6, 3, 7");
+      // BST: preorder of balanced BST with inorder = sorted 1..7
+      setFirstInput("4, 2, 1, 3, 6, 5, 7");
+      setInorderInput("1, 2, 3, 4, 5, 6, 7");
     } else {
-      setFirstInput("4, 5, 2, 6, 7, 3, 1");
-      setInorderInput("4, 2, 5, 1, 6, 3, 7");
+      // Same BST, postorder traversal
+      setFirstInput("1, 3, 2, 5, 7, 6, 4");
+      setInorderInput("1, 2, 3, 4, 5, 6, 7");
     }
     setTree(null);
     setError(null);
     setInfo(null);
     setVerification(null);
+  };
+
+  const isSortedAscending = (arr: string[]): boolean => {
+    for (let i = 1; i < arr.length; i++) {
+      const a = Number(arr[i - 1]);
+      const b = Number(arr[i]);
+      if (Number.isNaN(a) || Number.isNaN(b)) {
+        // Fallback to string compare for non-numeric
+        if (arr[i - 1].localeCompare(arr[i]) >= 0) return false;
+      } else {
+        if (a >= b) return false;
+      }
+    }
+    return true;
   };
 
   const firstLabel = mode === "pre-in" ? "Preorder" : "Postorder";
@@ -97,8 +120,8 @@ export const TreeReconstructor: React.FC = () => {
             Reconstruct Tree
           </h2>
           <p className="text-xs text-[#a0a0a0] mt-1">
-            Rebuild a general binary tree from two of its traversals. Inputs are
-            validated mathematically before construction.
+            Rebuild a <span className="text-white/80">Binary Search Tree (BST)</span> from
+            two of its traversals. The inorder sequence must be sorted in ascending order.
           </p>
         </div>
 
@@ -194,7 +217,7 @@ export const TreeReconstructor: React.FC = () => {
           <div className="text-[#a0a0a0] font-semibold mb-1 flex items-center gap-1.5">
             <Info className="w-3 h-3" strokeWidth={1.5} /> Notes
           </div>
-          <div>• This module reconstructs a <span className="text-white/80">general binary tree</span> (not a BST). The inorder sequence reflects the tree’s structure and is not expected to be sorted.</div>
+          <div>• This module reconstructs a <span className="text-white/80">BST</span> — the inorder traversal must be sorted in <span className="text-white/80">ascending</span> order.</div>
           <div>• Duplicate values are rejected (ambiguous reconstruction).</div>
           <div>• Both traversals must contain the same set of values.</div>
         </div>
