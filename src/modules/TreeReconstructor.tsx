@@ -97,8 +97,8 @@ export const TreeReconstructor: React.FC = () => {
             Reconstruct Tree
           </h2>
           <p className="text-xs text-[#a0a0a0] mt-1">
-            Rebuild a binary tree from two of its traversals. Inputs are validated
-            mathematically before construction.
+            Rebuild a general binary tree from two of its traversals. Inputs are
+            validated mathematically before construction.
           </p>
         </div>
 
@@ -194,7 +194,7 @@ export const TreeReconstructor: React.FC = () => {
           <div className="text-[#a0a0a0] font-semibold mb-1 flex items-center gap-1.5">
             <Info className="w-3 h-3" strokeWidth={1.5} /> Notes
           </div>
-          <div>• This is a general binary tree — the inorder output equals your input, and is <span className="text-white/80">not</span> sorted unless you entered a sorted sequence.</div>
+          <div>• This module reconstructs a <span className="text-white/80">general binary tree</span> (not a BST). The inorder sequence reflects the tree’s structure and is not expected to be sorted.</div>
           <div>• Duplicate values are rejected (ambiguous reconstruction).</div>
           <div>• Both traversals must contain the same set of values.</div>
         </div>
