@@ -6,12 +6,15 @@ import {
   Instagram,
   Heart,
   GraduationCap,
+  Globe,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const INSTAGRAM_URL =
   "https://www.instagram.com/li0vy_?igsh=MXZ2czd3ODA3ejJ6ZA==";
 const INSTAGRAM_HANDLE = "@li0vy_";
+const PORTFOLIO_URL = "https://portfolio-monopoly63s-projects.vercel.app/";
+const PORTFOLIO_DOMAIN = "portfolio-monopoly63s-projects.vercel.app";
 
 interface SiteFooterProps {
   onNavigate?: (tab: string) => void;
@@ -50,13 +53,24 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ onNavigate }) => {
                 {t("footer.aboutText")}
               </p>
 
-              <Link
-                to="/theory"
-                className="mt-4 inline-flex items-center gap-2 px-3 py-2 glass rounded-lg text-[12px] font-semibold text-white/90 hover:bg-white/10 transition-colors"
-              >
-                <GraduationCap className="w-3.5 h-3.5" strokeWidth={1.5} />
-                {t("footer.theory")}
-              </Link>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link
+                  to="/theory"
+                  className="inline-flex items-center gap-2 px-3 py-2 glass rounded-lg text-[12px] font-semibold text-white/90 hover:bg-white/10 transition-colors"
+                >
+                  <GraduationCap className="w-3.5 h-3.5" strokeWidth={1.5} />
+                  {t("footer.theory")}
+                </Link>
+                <a
+                  href={PORTFOLIO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-2 glass rounded-lg text-[12px] font-semibold text-white/90 hover:bg-white/10 transition-colors"
+                >
+                  <Globe className="w-3.5 h-3.5" strokeWidth={1.5} />
+                  {t("footer.portfolio")}
+                </a>
+              </div>
             </div>
 
             {/* Resources */}
@@ -98,28 +112,52 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ onNavigate }) => {
               >
                 {t("footer.followMe")}
               </div>
-              <a
-                href={INSTAGRAM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 px-3 py-2.5 glass-card group transition-all duration-200 hover:bg-white/10 w-full"
-                style={{ borderRadius: "12px" }}
-              >
-                <span className="w-9 h-9 rounded-lg glass-strong flex items-center justify-center shrink-0">
-                  <Instagram className="w-4 h-4 text-white" strokeWidth={1.5} />
-                </span>
-                <div className="text-start overflow-hidden">
-                  <div
-                    className="text-[10px] uppercase text-[#a0a0a0]"
-                    style={{ letterSpacing: "0.15em" }}
-                  >
-                    Instagram
+              <div className="flex flex-col gap-2">
+                <a
+                  href={PORTFOLIO_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 px-3 py-2.5 glass-card group transition-all duration-200 hover:bg-white/10 w-full"
+                  style={{ borderRadius: "12px" }}
+                >
+                  <span className="w-9 h-9 rounded-lg glass-strong flex items-center justify-center shrink-0">
+                    <Globe className="w-4 h-4 text-white" strokeWidth={1.5} />
+                  </span>
+                  <div className="text-start overflow-hidden">
+                    <div
+                      className="text-[10px] uppercase text-[#a0a0a0]"
+                      style={{ letterSpacing: "0.15em" }}
+                    >
+                      {t("footer.portfolio")}
+                    </div>
+                    <div className="text-[12px] font-semibold text-white truncate">
+                      {PORTFOLIO_DOMAIN}
+                    </div>
                   </div>
-                  <div className="text-sm font-semibold text-white truncate">
-                    {INSTAGRAM_HANDLE}
+                </a>
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 px-3 py-2.5 glass-card group transition-all duration-200 hover:bg-white/10 w-full"
+                  style={{ borderRadius: "12px" }}
+                >
+                  <span className="w-9 h-9 rounded-lg glass-strong flex items-center justify-center shrink-0">
+                    <Instagram className="w-4 h-4 text-white" strokeWidth={1.5} />
+                  </span>
+                  <div className="text-start overflow-hidden">
+                    <div
+                      className="text-[10px] uppercase text-[#a0a0a0]"
+                      style={{ letterSpacing: "0.15em" }}
+                    >
+                      Instagram
+                    </div>
+                    <div className="text-sm font-semibold text-white truncate">
+                      {INSTAGRAM_HANDLE}
+                    </div>
                   </div>
-                </div>
-              </a>
+                </a>
+              </div>
             </div>
           </div>
 
