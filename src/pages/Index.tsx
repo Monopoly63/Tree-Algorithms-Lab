@@ -1,6 +1,7 @@
 // Tree Algorithms Lab - Main Page
 // Student: Abdulmoin Hablas | Course: Algorithms 3
 import React, { useEffect, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { TreeNode } from "@/lib/tree";
 import { TreeBuilder } from "@/modules/TreeBuilder";
 import { TraversalVisualizer } from "@/modules/TraversalVisualizer";
@@ -19,6 +20,7 @@ import {
   Sigma,
   Puzzle,
   Instagram,
+  GraduationCap,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -30,7 +32,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ExportTree } from "@/components/ExportTree";
 import { Tutorial, hasSeenTutorial } from "@/components/Tutorial";
 
-const INSTAGRAM_URL = "https://www.instagram.com/li0vy_?igsh=MXZ2czd3ODA3ejJ6ZA==";
+const INSTAGRAM_URL =
+  "https://www.instagram.com/li0vy_?igsh=MXZ2czd3ODA3ejJ6ZA==";
 
 const TAB_KEYS = [
   { value: "builder", step: "01", icon: TreePine },
@@ -41,31 +44,64 @@ const TAB_KEYS = [
   { value: "symbolic", step: "06", icon: Sigma },
 ] as const;
 
+const VALID_TABS = TAB_KEYS.map((t) => t.value) as readonly string[];
+
 const Index: React.FC = () => {
   const { t } = useTranslation();
+  const [params, setParams] = useSearchParams();
+  const urlTab = params.get("tab");
+  const initialTab =
+    urlTab && VALID_TABS.includes(urlTab) ? urlTab : "builder";
+
   const [tree, setTree] = useState<TreeNode | null>(null);
-  const [active, setActive] = useState<string>("builder");
+  const [active, setActive] = useState<string>(initialTab);
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const tabsAnchorRef = useRef<HTMLDivElement>(null);
 
+  // Sync URL when active tab changes (deep-linking from Theory page)
+  useEffect(() => {
+    if (params.get("tab") !== active) {
+      const next = new URLSearchParams(params);
+      next.set("tab", active);
+      setParams(next, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
+  // Scroll to tabs if URL already has a tab param on first render
+  useEffect(() => {
+    if (urlTab && VALID_TABS.includes(urlTab)) {
+      const tid = window.setTimeout(() => {
+        tabsAnchorRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 120);
+      return () => window.clearTimeout(tid);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Auto-open tutorial on first visit
   useEffect(() => {
     if (!hasSeenTutorial()) {
-      const t = window.setTimeout(() => setTutorialOpen(true), 900);
-      return () => window.clearTimeout(t);
+      const tid = window.setTimeout(() => setTutorialOpen(true), 900);
+      return () => window.clearTimeout(tid);
     }
   }, []);
 
   const activeMeta = TAB_KEYS.find((x) => x.value === active) ?? TAB_KEYS[0];
 
   const scrollToTabs = () => {
-    tabsAnchorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    tabsAnchorRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   const handleNavigate = (tab: string) => {
     setActive(tab);
-    // next tick so DOM updates
     window.setTimeout(scrollToTabs, 50);
   };
 
@@ -95,6 +131,20 @@ const Index: React.FC = () => {
             </div>
           </div>
 
+          {/* Nav */}
+          <nav className="hidden md:flex items-center gap-1 glass p-1 rounded-xl">
+            <span className="px-4 py-1.5 text-xs font-semibold text-white glass-strong rounded-lg">
+              {t("nav.lab")}
+            </span>
+            <Link
+              to="/theory"
+              className="px-4 py-1.5 text-xs font-semibold text-[#a0a0a0] hover:text-white rounded-lg transition-colors inline-flex items-center gap-1.5"
+            >
+              <GraduationCap className="w-3.5 h-3.5" strokeWidth={1.5} />
+              {t("nav.theory")}
+            </Link>
+          </nav>
+
           <div className="flex items-center gap-2">
             <LanguageToggle />
             <ThemeToggle />
@@ -119,10 +169,7 @@ const Index: React.FC = () => {
 
       {/* ═══ MAIN ═══ */}
       <main className="max-w-7xl mx-auto px-5 py-8 relative">
-        <Hero
-          onStart={scrollToTabs}
-          onTutorial={() => setTutorialOpen(true)}
-        />
+        <Hero onStart={scrollToTabs} onTutorial={() => setTutorialOpen(true)} />
 
         <FeatureCards onNavigate={handleNavigate} />
 
@@ -154,7 +201,6 @@ const Index: React.FC = () => {
               })}
             </TabsList>
 
-            {/* Export toolbar — only meaningful when a tree exists */}
             <ExportTree
               target={contentRef.current}
               tree={tree}
@@ -187,10 +233,7 @@ const Index: React.FC = () => {
 
       <SiteFooter onNavigate={handleNavigate} />
 
-      <Tutorial
-        open={tutorialOpen}
-        onClose={() => setTutorialOpen(false)}
-      />
+      <Tutorial open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
     </div>
   );
 };

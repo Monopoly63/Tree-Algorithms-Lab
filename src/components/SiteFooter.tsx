@@ -1,6 +1,12 @@
 // Site footer
 import React from "react";
-import { GitBranch, Instagram, Heart, Github } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  GitBranch,
+  Instagram,
+  Heart,
+  GraduationCap,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const INSTAGRAM_URL =
@@ -14,7 +20,14 @@ interface SiteFooterProps {
 export const SiteFooter: React.FC<SiteFooterProps> = ({ onNavigate }) => {
   const { t } = useTranslation();
 
-  const tabKeys = ["builder", "mary", "traversal", "reconstruct", "numeric", "symbolic"];
+  const tabKeys = [
+    "builder",
+    "mary",
+    "traversal",
+    "reconstruct",
+    "numeric",
+    "symbolic",
+  ];
 
   return (
     <footer className="mt-12 relative">
@@ -36,6 +49,14 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ onNavigate }) => {
               <p className="text-[12px] text-[#a0a0a0] leading-relaxed max-w-md">
                 {t("footer.aboutText")}
               </p>
+
+              <Link
+                to="/theory"
+                className="mt-4 inline-flex items-center gap-2 px-3 py-2 glass rounded-lg text-[12px] font-semibold text-white/90 hover:bg-white/10 transition-colors"
+              >
+                <GraduationCap className="w-3.5 h-3.5" strokeWidth={1.5} />
+                {t("footer.theory")}
+              </Link>
             </div>
 
             {/* Resources */}
@@ -57,6 +78,15 @@ export const SiteFooter: React.FC<SiteFooterProps> = ({ onNavigate }) => {
                     </button>
                   </li>
                 ))}
+                <li>
+                  <Link
+                    to="/theory"
+                    className="text-[12px] text-[#a0a0a0] hover:text-white transition-colors inline-flex items-center gap-1.5"
+                  >
+                    <GraduationCap className="w-3 h-3" strokeWidth={1.5} />
+                    {t("footer.theory")}
+                  </Link>
+                </li>
               </ul>
             </div>
 

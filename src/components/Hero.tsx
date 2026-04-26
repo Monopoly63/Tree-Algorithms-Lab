@@ -1,7 +1,8 @@
 // Hero section for the landing page
 import React from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Sparkles, Play, BookOpen } from "lucide-react";
+import { Sparkles, Play, BookOpen, GraduationCap } from "lucide-react";
 
 interface HeroProps {
   onStart?: () => void;
@@ -12,7 +13,6 @@ export const Hero: React.FC<HeroProps> = ({ onStart, onTutorial }) => {
   const { t } = useTranslation();
   return (
     <section className="glass-card p-7 md:p-10 mb-6 animate-fade-in-up relative overflow-hidden">
-      {/* Decorative blurred orb */}
       <div
         aria-hidden
         className="pointer-events-none absolute -top-24 -end-24 w-80 h-80 rounded-full"
@@ -48,11 +48,18 @@ export const Hero: React.FC<HeroProps> = ({ onStart, onTutorial }) => {
             </button>
             <button
               onClick={onTutorial}
-              className="glass-btn px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2 !bg-transparent hover:!bg-white/10"
+              className="glass-btn px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2"
             >
               <BookOpen className="w-4 h-4" strokeWidth={1.5} />
               {t("hero.ctaLearn")}
             </button>
+            <Link
+              to="/theory"
+              className="glass-btn px-5 py-2.5 text-sm font-semibold inline-flex items-center gap-2"
+            >
+              <GraduationCap className="w-4 h-4" strokeWidth={1.5} />
+              {t("hero.ctaTheory")}
+            </Link>
           </div>
         </div>
 
