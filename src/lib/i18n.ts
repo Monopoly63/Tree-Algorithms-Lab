@@ -70,6 +70,7 @@ const resources = {
         madeWith: "Made with",
         by: "by",
         theory: "Theory",
+        portfolio: "Portfolio",
       },
       tutorial: {
         welcome: {
@@ -186,6 +187,7 @@ const resources = {
         madeWith: "صُنع بـ",
         by: "بواسطة",
         theory: "الشرح النظري",
+        portfolio: "البورتفوليو",
       },
       tutorial: {
         welcome: {
