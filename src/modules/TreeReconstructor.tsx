@@ -10,7 +10,7 @@ import {
 } from "@/lib/tree";
 import { layoutBinaryTree } from "@/lib/layout";
 import { TreeCanvas } from "@/components/TreeCanvas";
-import { Play, AlertCircle, CheckCircle2, Wand2 } from "lucide-react";
+import { Play, AlertCircle, CheckCircle2, Wand2, Info } from "lucide-react";
 
 type Mode = "pre-in" | "post-in";
 
@@ -22,9 +22,11 @@ export const TreeReconstructor: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [verification, setVerification] = useState<{
-    preorder: string;
-    inorder: string;
-    postorder: string;
+    preorder: string[];
+    inorder: string[];
+    postorder: string[];
+    inputFirst: string[];
+    inputInorder: string[];
   } | null>(null);
 
   const handleBuild = () => {
@@ -50,12 +52,18 @@ export const TreeReconstructor: React.FC = () => {
       }
       setTree(result);
       // Verification: re-run traversals from the built tree
-      const pre = traverse(result, "preorder").map((s) => s.value).join(", ");
-      const ino = traverse(result, "inorder").map((s) => s.value).join(", ");
-      const post = traverse(result, "postorder").map((s) => s.value).join(", ");
-      setVerification({ preorder: pre, inorder: ino, postorder: post });
+      const pre = traverse(result, "preorder").map((s) => s.value);
+      const ino = traverse(result, "inorder").map((s) => s.value);
+      const post = traverse(result, "postorder").map((s) => s.value);
+      setVerification({
+        preorder: pre,
+        inorder: ino,
+        postorder: post,
+        inputFirst: firstTokens,
+        inputInorder: inorderTokens,
+      });
       setInfo(
-        `Tree reconstructed successfully from ${firstTokens.length} nodes. Traversals verified below.`
+        `Tree reconstructed from ${firstTokens.length} nodes. Below you can verify that the traversals regenerated from the built tree match your inputs exactly.`
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Reconstruction failed.");
@@ -78,6 +86,8 @@ export const TreeReconstructor: React.FC = () => {
   };
 
   const firstLabel = mode === "pre-in" ? "Preorder" : "Postorder";
+  const arraysEqual = (a: string[], b: string[]) =>
+    a.length === b.length && a.every((v, i) => v === b[i]);
 
   return (
     <div className="grid lg:grid-cols-3 gap-4">
@@ -181,11 +191,12 @@ export const TreeReconstructor: React.FC = () => {
           className="text-[11px] text-[#555555] pt-3 border-t space-y-1.5 leading-relaxed"
           style={{ borderColor: "rgba(255,255,255,0.08)" }}
         >
-          <div className="text-[#a0a0a0] font-semibold mb-1">Rules checked:</div>
-          <div>• Both traversals must have the same length.</div>
-          <div>• Both must contain exactly the same set of values.</div>
-          <div>• No duplicate node values are allowed.</div>
-          <div>• Values are consumed in the correct traversal order.</div>
+          <div className="text-[#a0a0a0] font-semibold mb-1 flex items-center gap-1.5">
+            <Info className="w-3 h-3" strokeWidth={1.5} /> Notes
+          </div>
+          <div>• This is a general binary tree — the inorder output equals your input, and is <span className="text-white/80">not</span> sorted unless you entered a sorted sequence.</div>
+          <div>• Duplicate values are rejected (ambiguous reconstruction).</div>
+          <div>• Both traversals must contain the same set of values.</div>
         </div>
       </div>
 
@@ -196,16 +207,54 @@ export const TreeReconstructor: React.FC = () => {
           emptyHint="Provide two traversals and click Reconstruct."
         />
         {tree && verification && (
-          <div className="glass-card p-5 space-y-3 font-mono text-xs animate-fade-in-up">
+          <div className="glass-card p-5 space-y-4 font-mono text-xs animate-fade-in-up">
             <div
-              className="text-[10px] uppercase text-[#555555] mb-2"
+              className="text-[10px] uppercase text-[#555555]"
               style={{ letterSpacing: "0.2em" }}
             >
-              Verification (regenerated from the built tree)
+              Verification — regenerated from the built tree
             </div>
-            <Row label="Preorder" value={verification.preorder} />
-            <Row label="Inorder" value={verification.inorder} />
-            <Row label="Postorder" value={verification.postorder} />
+
+            {/* First input vs regenerated */}
+            <VerifyRow
+              label={firstLabel}
+              regenerated={
+                mode === "pre-in" ? verification.preorder : verification.postorder
+              }
+              input={verification.inputFirst}
+              match={arraysEqual(
+                mode === "pre-in" ? verification.preorder : verification.postorder,
+                verification.inputFirst
+              )}
+            />
+            {/* Inorder input vs regenerated */}
+            <VerifyRow
+              label="Inorder"
+              regenerated={verification.inorder}
+              input={verification.inputInorder}
+              match={arraysEqual(verification.inorder, verification.inputInorder)}
+            />
+
+            {/* Other (derived) traversal — no input to compare */}
+            <div
+              className="pt-3 border-t space-y-2"
+              style={{ borderColor: "rgba(255,255,255,0.08)" }}
+            >
+              <div
+                className="text-[10px] uppercase text-[#555555]"
+                style={{ letterSpacing: "0.2em" }}
+              >
+                Derived third traversal
+              </div>
+              <Row
+                label={mode === "pre-in" ? "Postorder" : "Preorder"}
+                value={
+                  mode === "pre-in"
+                    ? verification.postorder.join(", ")
+                    : verification.preorder.join(", ")
+                }
+              />
+            </div>
           </div>
         )}
       </div>
@@ -222,5 +271,42 @@ const Row: React.FC<{ label: string; value: string }> = ({ label, value }) => (
       {label}
     </span>
     <span className="text-[#e0e0e0] flex-1 break-all">{value}</span>
+  </div>
+);
+
+const VerifyRow: React.FC<{
+  label: string;
+  input: string[];
+  regenerated: string[];
+  match: boolean;
+}> = ({ label, input, regenerated, match }) => (
+  <div className="space-y-1.5">
+    <div className="flex items-center gap-2">
+      <span
+        className="text-[#555555] w-20 text-[10px] uppercase"
+        style={{ letterSpacing: "0.2em" }}
+      >
+        {label}
+      </span>
+      {match ? (
+        <span className="inline-flex items-center gap-1 text-[10px] text-white/90 px-2 py-0.5 rounded-full border border-white/20 bg-white/5">
+          <CheckCircle2 className="w-3 h-3" strokeWidth={1.5} /> match
+        </span>
+      ) : (
+        <span className="inline-flex items-center gap-1 text-[10px] text-white/90 px-2 py-0.5 rounded-full border border-white/30 bg-white/10">
+          <AlertCircle className="w-3 h-3" strokeWidth={1.5} /> differ
+        </span>
+      )}
+    </div>
+    <div className="pl-[88px] space-y-0.5">
+      <div className="flex gap-2">
+        <span className="text-[#555555] text-[10px] w-14">input</span>
+        <span className="text-[#a0a0a0] break-all">{input.join(", ")}</span>
+      </div>
+      <div className="flex gap-2">
+        <span className="text-[#555555] text-[10px] w-14">built</span>
+        <span className="text-white/90 break-all">{regenerated.join(", ")}</span>
+      </div>
+    </div>
   </div>
 );
