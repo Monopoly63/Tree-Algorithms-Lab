@@ -10,6 +10,10 @@ const resources = {
         title: "TREE ALGORITHMS LAB",
         subtitle: "Algorithms 3 · Abdulmoin Hablas",
       },
+      nav: {
+        lab: "Lab",
+        theory: "Theory",
+      },
       hero: {
         badge: "Interactive Lab",
         title: "Visualize & Explore Binary Trees",
@@ -18,6 +22,7 @@ const resources = {
         liveBadge: "Running locally in your browser",
         ctaStart: "Start Building",
         ctaLearn: "Tutorial",
+        ctaTheory: "Read Theory",
       },
       tabs: {
         builder: "Tree Builder",
@@ -30,6 +35,7 @@ const resources = {
       breadcrumb: {
         home: "Home",
         current: "Current",
+        theory: "Theory",
       },
       actions: {
         exportPng: "Export PNG",
@@ -41,6 +47,8 @@ const resources = {
         next: "Next",
         back: "Back",
         finish: "Finish",
+        openLab: "Open in Lab",
+        previous: "Previous",
       },
       theme: {
         toggleLight: "Switch to light mode",
@@ -61,6 +69,7 @@ const resources = {
         rights: "Tree Algorithms Lab · Built with React · TypeScript · Tailwind CSS",
         madeWith: "Made with",
         by: "by",
+        theory: "Theory",
       },
       tutorial: {
         welcome: {
@@ -92,6 +101,23 @@ const resources = {
         features: "Features",
         learnMore: "Learn more",
       },
+      theory: {
+        pageTitle: "Theory & Lectures",
+        pageSubtitle:
+          "Structured theoretical notes for every algorithm implemented in the lab.",
+        lecturesLabel: "Lectures",
+        sections: {
+          introduction: "Introduction",
+          definition: "Definition",
+          keyTerms: "Key Terms",
+          explanation: "Explanation",
+          complexity: "Time & Space Complexity",
+          examples: "Examples",
+          pseudocode: "Pseudocode",
+          applications: "Applications",
+          tryIt: "Try it in the lab",
+        },
+      },
     },
   },
   ar: {
@@ -99,6 +125,10 @@ const resources = {
       brand: {
         title: "مختبر خوارزميات الأشجار",
         subtitle: "الخوارزميات 3 · عبدالمعين حبلص",
+      },
+      nav: {
+        lab: "المختبر",
+        theory: "الشرح النظري",
       },
       hero: {
         badge: "مختبر تفاعلي",
@@ -108,6 +138,7 @@ const resources = {
         liveBadge: "يعمل محلياً في متصفحك",
         ctaStart: "ابدأ البناء",
         ctaLearn: "جولة تعليمية",
+        ctaTheory: "الشرح النظري",
       },
       tabs: {
         builder: "بناء الشجرة",
@@ -120,6 +151,7 @@ const resources = {
       breadcrumb: {
         home: "الرئيسية",
         current: "الحالي",
+        theory: "الشرح النظري",
       },
       actions: {
         exportPng: "تصدير PNG",
@@ -131,6 +163,8 @@ const resources = {
         next: "التالي",
         back: "السابق",
         finish: "إنهاء",
+        openLab: "افتح في المختبر",
+        previous: "السابق",
       },
       theme: {
         toggleLight: "التبديل للوضع النهاري",
@@ -151,6 +185,7 @@ const resources = {
         rights: "مختبر خوارزميات الأشجار · مبني بـ React · TypeScript · Tailwind CSS",
         madeWith: "صُنع بـ",
         by: "بواسطة",
+        theory: "الشرح النظري",
       },
       tutorial: {
         welcome: {
@@ -181,6 +216,23 @@ const resources = {
       misc: {
         features: "المميزات",
         learnMore: "المزيد",
+      },
+      theory: {
+        pageTitle: "الشرح النظري والمحاضرات",
+        pageSubtitle:
+          "ملاحظات نظرية منظمة لكل خوارزمية مطبّقة في المختبر.",
+        lecturesLabel: "المحاضرات",
+        sections: {
+          introduction: "المقدمة",
+          definition: "التعريف",
+          keyTerms: "المصطلحات الأساسية",
+          explanation: "الشرح",
+          complexity: "التعقيد الزمني والمكاني",
+          examples: "أمثلة",
+          pseudocode: "الخطوات (Pseudocode)",
+          applications: "التطبيقات",
+          tryIt: "جرّبها في المختبر",
+        },
       },
     },
   },
