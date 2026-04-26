@@ -6,6 +6,7 @@ import BlogRoutes from './blog-routes';
 import Index from './pages/Index';
 import AuthCallback from './pages/AuthCallback';
 import AuthError from './pages/AuthError';
+import { ThemeProvider } from '@/lib/theme';
 // MODULE_IMPORTS_START
 // MODULE_IMPORTS_END
 
@@ -26,12 +27,14 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     {/* MODULE_PROVIDERS_START */}
     {/* MODULE_PROVIDERS_END */}
-    <TooltipProvider>
-      <Toaster />
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
     {/* MODULE_PROVIDERS_CLOSE */}
   </QueryClientProvider>
 );
