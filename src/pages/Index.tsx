@@ -7,6 +7,7 @@ import { TraversalVisualizer } from "@/modules/TraversalVisualizer";
 import { MAryConverter } from "@/modules/MAryConverter";
 import { NumericExpressionTree } from "@/modules/NumericExpressionTree";
 import { SymbolicExpressionTree } from "@/modules/SymbolicExpressionTree";
+import { TreeReconstructor } from "@/modules/TreeReconstructor";
 import { DownloadBackend } from "@/components/DownloadBackend";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -16,6 +17,7 @@ import {
   Route,
   Calculator,
   Sigma,
+  Puzzle,
   Instagram,
 } from "lucide-react";
 
@@ -26,8 +28,9 @@ const TABS = [
   { value: "builder", label: "Tree Builder", step: "01", icon: TreePine },
   { value: "mary", label: "m-ary → BT → BST", step: "02", icon: Workflow },
   { value: "traversal", label: "Traversal Visualizer", step: "03", icon: Route },
-  { value: "numeric", label: "Numeric Expression", step: "04", icon: Calculator },
-  { value: "symbolic", label: "Symbolic Expression", step: "05", icon: Sigma },
+  { value: "reconstruct", label: "Reconstruct Tree", step: "04", icon: Puzzle },
+  { value: "numeric", label: "Numeric Expression", step: "05", icon: Calculator },
+  { value: "symbolic", label: "Symbolic Expression", step: "06", icon: Sigma },
 ];
 
 const Index: React.FC = () => {
@@ -135,6 +138,9 @@ const Index: React.FC = () => {
             </TabsContent>
             <TabsContent value="traversal" className="animate-fade-in-up">
               <TraversalVisualizer tree={tree} />
+            </TabsContent>
+            <TabsContent value="reconstruct" className="animate-fade-in-up">
+              <TreeReconstructor />
             </TabsContent>
             <TabsContent value="numeric" className="animate-fade-in-up">
               <NumericExpressionTree />

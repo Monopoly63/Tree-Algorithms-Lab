@@ -1,23 +1,55 @@
 // Tree Algorithms Lab - Tab 5: Symbolic Expression Tree (Pure Black/White Glass)
 // Student: Abdulmoin Hablas | Course: Algorithms 3
 import React, { useState } from "react";
-import { buildExpressionTree, prefixOf, postfixOf, infixOf, TreeNode } from "@/lib/tree";
+import {
+  buildExpressionTree,
+  buildExpressionTreeFromPrefix,
+  buildExpressionTreeFromPostfix,
+  parseTokens,
+  prefixOf,
+  postfixOf,
+  infixOf,
+  TreeNode,
+} from "@/lib/tree";
 import { layoutBinaryTree } from "@/lib/layout";
 import { TreeCanvas } from "@/components/TreeCanvas";
-import { Play } from "lucide-react";
+import { Play, AlertCircle } from "lucide-react";
+
+type Notation = "infix" | "prefix" | "postfix";
+
+const PLACEHOLDERS: Record<Notation, string> = {
+  infix: "(a+b)*(c-d)",
+  prefix: "* + a b - c d",
+  postfix: "a b + c d - *",
+};
 
 export const SymbolicExpressionTree: React.FC = () => {
-  const [expr, setExpr] = useState("(a+b)*(c-d)");
+  const [notation, setNotation] = useState<Notation>("infix");
+  const [expr, setExpr] = useState(PLACEHOLDERS.infix);
   const [tree, setTree] = useState<TreeNode | null>(null);
   const [prefix, setPrefix] = useState("");
   const [postfix, setPostfix] = useState("");
   const [inorder, setInorder] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const switchNotation = (n: Notation) => {
+    setNotation(n);
+    setExpr(PLACEHOLDERS[n]);
+    setTree(null);
+    setError(null);
+  };
+
   const handleBuild = () => {
     setError(null);
     try {
-      const t = buildExpressionTree(expr);
+      let t: TreeNode;
+      if (notation === "infix") {
+        t = buildExpressionTree(expr);
+      } else if (notation === "prefix") {
+        t = buildExpressionTreeFromPrefix(parseTokens(expr));
+      } else {
+        t = buildExpressionTreeFromPostfix(parseTokens(expr));
+      }
       setTree(t);
       setPrefix(prefixOf(t));
       setPostfix(postfixOf(t));
@@ -28,26 +60,49 @@ export const SymbolicExpressionTree: React.FC = () => {
     }
   };
 
+  const inputLabel =
+    notation === "infix"
+      ? "Symbolic infix expression"
+      : notation === "prefix"
+      ? "Prefix expression (space-separated)"
+      : "Postfix expression (space-separated)";
+
   return (
     <div className="grid lg:grid-cols-3 gap-4">
       <div className="lg:col-span-1 glass-card p-5 space-y-4">
         <div>
           <h2 className="text-base font-semibold text-white">Symbolic Expression Tree</h2>
           <p className="text-xs text-[#a0a0a0] mt-1">
-            Works with variables and any algebraic expression.
+            Works with variables. Accepts infix, prefix, or postfix notation.
           </p>
         </div>
+
+        <div className="glass-tabs flex gap-1">
+          {(["infix", "prefix", "postfix"] as Notation[]).map((n) => (
+            <button
+              key={n}
+              onClick={() => switchNotation(n)}
+              className={`flex-1 px-2 py-2 rounded-[10px] text-[11px] font-semibold uppercase transition-all ${
+                notation === n ? "glass-tab-active" : "text-[#666666] hover:text-white"
+              }`}
+              style={{ letterSpacing: "0.1em" }}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+
         <label
           className="text-[#a0a0a0] text-[10px] uppercase block"
           style={{ letterSpacing: "0.15em" }}
         >
-          Symbolic expression
+          {inputLabel}
         </label>
         <input
           type="text"
           value={expr}
           onChange={(e) => setExpr(e.target.value)}
-          placeholder="(a+b)*(c-d)"
+          placeholder={PLACEHOLDERS[notation]}
           className="glass-input w-full px-3 py-2.5 font-mono text-sm"
         />
         <button
@@ -56,7 +111,15 @@ export const SymbolicExpressionTree: React.FC = () => {
         >
           <Play className="w-4 h-4" strokeWidth={1.5} /> Parse &amp; Build
         </button>
-        {error && <div className="text-[#a0a0a0] text-xs italic">{error}</div>}
+        {error && (
+          <div className="glass-output p-3 text-xs flex items-start gap-2 border border-white/10">
+            <AlertCircle
+              className="w-4 h-4 text-white/80 shrink-0 mt-0.5"
+              strokeWidth={1.5}
+            />
+            <span className="text-white/90 leading-relaxed">{error}</span>
+          </div>
+        )}
         <div
           className="text-[11px] text-[#555555] pt-3 border-t space-y-2"
           style={{ borderColor: "rgba(255,255,255,0.08)" }}

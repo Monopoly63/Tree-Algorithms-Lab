@@ -352,3 +352,224 @@ export function evaluateTree(root: TreeNode | null): number {
       throw new Error(`Unknown operator: ${root.value}`);
   }
 }
+
+// ---------- Tree Reconstruction (Preorder+Inorder / Postorder+Inorder) ----------
+
+export interface ReconstructInput {
+  values: string[];
+  inorder: string[];
+}
+
+// Validate common preconditions for reconstruction from two traversals
+export function validateReconstructionInputs(
+  first: string[],
+  inorder: string[],
+  firstName: string
+): string | null {
+  if (first.length === 0 || inorder.length === 0) {
+    return "Both traversals must be non-empty.";
+  }
+  if (first.length !== inorder.length) {
+    return `Length mismatch: ${firstName} has ${first.length} element(s), but inorder has ${inorder.length}.`;
+  }
+  // Check for duplicates — reconstruction from two traversals requires unique labels
+  const dupsA = findDuplicates(first);
+  if (dupsA.length > 0) {
+    return `Duplicate value(s) in ${firstName}: ${dupsA.join(", ")}. Reconstruction requires unique node values.`;
+  }
+  const dupsB = findDuplicates(inorder);
+  if (dupsB.length > 0) {
+    return `Duplicate value(s) in inorder: ${dupsB.join(", ")}. Reconstruction requires unique node values.`;
+  }
+  // Check that both traversals contain the same set of values
+  const setA = new Set(first);
+  const setB = new Set(inorder);
+  const missingInInorder = first.filter((v) => !setB.has(v));
+  if (missingInInorder.length > 0) {
+    return `${firstName} contains value(s) not present in inorder: ${missingInInorder.join(", ")}.`;
+  }
+  const missingInFirst = inorder.filter((v) => !setA.has(v));
+  if (missingInFirst.length > 0) {
+    return `Inorder contains value(s) not present in ${firstName}: ${missingInFirst.join(", ")}.`;
+  }
+  return null;
+}
+
+function findDuplicates(arr: string[]): string[] {
+  const seen = new Set<string>();
+  const dups = new Set<string>();
+  for (const v of arr) {
+    if (seen.has(v)) dups.add(v);
+    seen.add(v);
+  }
+  return [...dups];
+}
+
+// Parse a user-provided traversal line (comma or whitespace separated)
+export function parseTokens(text: string): string[] {
+  return text
+    .split(/[\s,]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+// Build tree from preorder + inorder
+export function buildFromPreIn(preorder: string[], inorder: string[]): TreeNode | null {
+  const err = validateReconstructionInputs(preorder, inorder, "preorder");
+  if (err) throw new Error(err);
+  const inorderIndex = new Map<string, number>();
+  inorder.forEach((v, i) => inorderIndex.set(v, i));
+
+  let preIdx = 0;
+  const build = (inLeft: number, inRight: number): TreeNode | null => {
+    if (inLeft > inRight) return null;
+    const rootVal = preorder[preIdx++];
+    const idx = inorderIndex.get(rootVal);
+    if (idx === undefined || idx < inLeft || idx > inRight) {
+      // This shouldn't happen if validation passed, but guard anyway
+      throw new Error(
+        `Inconsistent traversals: cannot place "${rootVal}" from preorder in inorder range.`
+      );
+    }
+    const node: TreeNode = {
+      id: genId(),
+      value: rootVal,
+      left: null,
+      right: null,
+      kind: "default",
+    };
+    node.left = build(inLeft, idx - 1);
+    node.right = build(idx + 1, inRight);
+    return node;
+  };
+  return build(0, inorder.length - 1);
+}
+
+// Build tree from postorder + inorder
+export function buildFromPostIn(postorder: string[], inorder: string[]): TreeNode | null {
+  const err = validateReconstructionInputs(postorder, inorder, "postorder");
+  if (err) throw new Error(err);
+  const inorderIndex = new Map<string, number>();
+  inorder.forEach((v, i) => inorderIndex.set(v, i));
+
+  let postIdx = postorder.length - 1;
+  const build = (inLeft: number, inRight: number): TreeNode | null => {
+    if (inLeft > inRight) return null;
+    const rootVal = postorder[postIdx--];
+    const idx = inorderIndex.get(rootVal);
+    if (idx === undefined || idx < inLeft || idx > inRight) {
+      throw new Error(
+        `Inconsistent traversals: cannot place "${rootVal}" from postorder in inorder range.`
+      );
+    }
+    const node: TreeNode = {
+      id: genId(),
+      value: rootVal,
+      left: null,
+      right: null,
+      kind: "default",
+    };
+    // IMPORTANT: right first when consuming postorder from the end
+    node.right = build(idx + 1, inRight);
+    node.left = build(inLeft, idx - 1);
+    return node;
+  };
+  return build(0, inorder.length - 1);
+}
+
+// ---------- Expression Tree: build from prefix / postfix notations ----------
+
+const OPERATORS = new Set(["+", "-", "*", "/", "^"]);
+
+function classifyOperandKind(v: string): "operator" | "operand" {
+  return OPERATORS.has(v) ? "operator" : "operand";
+}
+
+// Build expression tree from prefix tokens (Polish notation).
+// Example: "+ 2 * 3 4"  or  "* + a b - c d"
+export function buildExpressionTreeFromPrefix(tokens: string[]): TreeNode {
+  if (tokens.length === 0) throw new Error("Prefix expression is empty.");
+  let i = 0;
+  const build = (): TreeNode => {
+    if (i >= tokens.length) {
+      throw new Error(
+        "Invalid prefix expression: not enough operands for the given operators."
+      );
+    }
+    const tok = tokens[i++];
+    if (OPERATORS.has(tok)) {
+      const left = build();
+      const right = build();
+      return {
+        id: genId(),
+        value: tok,
+        left,
+        right,
+        kind: "operator",
+      };
+    }
+    return {
+      id: genId(),
+      value: tok,
+      left: null,
+      right: null,
+      kind: "operand",
+    };
+  };
+  const root = build();
+  if (i !== tokens.length) {
+    throw new Error(
+      `Invalid prefix expression: ${tokens.length - i} extra token(s) after the main expression.`
+    );
+  }
+  return root;
+}
+
+// Build expression tree from postfix tokens (Reverse Polish Notation).
+// Example: "2 3 4 * +"  or  "a b + c d - *"
+export function buildExpressionTreeFromPostfix(tokens: string[]): TreeNode {
+  if (tokens.length === 0) throw new Error("Postfix expression is empty.");
+  const stack: TreeNode[] = [];
+  for (const tok of tokens) {
+    if (OPERATORS.has(tok)) {
+      if (stack.length < 2) {
+        throw new Error(
+          `Invalid postfix expression: operator "${tok}" expects two operands but only ${stack.length} available.`
+        );
+      }
+      const right = stack.pop()!;
+      const left = stack.pop()!;
+      stack.push({
+        id: genId(),
+        value: tok,
+        left,
+        right,
+        kind: "operator",
+      });
+    } else {
+      stack.push({
+        id: genId(),
+        value: tok,
+        left: null,
+        right: null,
+        kind: "operand",
+      });
+    }
+  }
+  if (stack.length !== 1) {
+    throw new Error(
+      `Invalid postfix expression: ${stack.length} trees left on the stack after processing (expected 1). Check the operator/operand balance.`
+    );
+  }
+  // Ensure kinds are correct in case we parsed a single operand
+  const root = stack[0];
+  // Mark operand/operator kinds across the whole tree (defensive)
+  const fix = (n: TreeNode | null) => {
+    if (!n) return;
+    n.kind = classifyOperandKind(n.value);
+    fix(n.left);
+    fix(n.right);
+  };
+  fix(root);
+  return root;
+}
