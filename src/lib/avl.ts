@@ -275,3 +275,161 @@ export function collectBalanceInfo(root: AVLNode | null): NodeBalanceInfo[] {
   walk(root);
   return result;
 }
+
+// ─── Plain BST Insert (no balancing) ─────────────────────────
+
+export function bstInsert(root: AVLNode | null, value: number): AVLNode {
+  if (!root) return makeAVLNode(value);
+  if (value < root.value) {
+    root.left = bstInsert(root.left, value);
+  } else if (value > root.value) {
+    root.right = bstInsert(root.right, value);
+  }
+  updateHeight(root);
+  return root;
+}
+
+export function buildUnbalancedBST(values: number[]): AVLNode | null {
+  let root: AVLNode | null = null;
+  for (const v of values) {
+    root = bstInsert(root, v);
+  }
+  return root;
+}
+
+// ─── Find imbalanced node IDs ────────────────────────────────
+
+export function findImbalancedNodes(root: AVLNode | null): string[] {
+  const ids: string[] = [];
+  const walk = (node: AVLNode | null) => {
+    if (!node) return;
+    if (Math.abs(getBalanceFactor(node)) > 1) {
+      ids.push(node.id);
+    }
+    walk(node.left);
+    walk(node.right);
+  };
+  walk(root);
+  return ids;
+}
+
+// ─── AVL Fix Step (one rotation at a time) ───────────────────
+
+export interface FixStepResult {
+  newRoot: AVLNode;
+  step: RotationStep;
+}
+
+/**
+ * Deep-clone an AVLNode tree so mutations don't affect the original.
+ */
+function cloneAVL(node: AVLNode | null): AVLNode | null {
+  if (!node) return null;
+  return {
+    id: node.id,
+    value: node.value,
+    left: cloneAVL(node.left),
+    right: cloneAVL(node.right),
+    height: node.height,
+  };
+}
+
+/** Recursively update heights in post-order. */
+function updateHeightsPostOrder(node: AVLNode | null): void {
+  if (!node) return;
+  updateHeightsPostOrder(node.left);
+  updateHeightsPostOrder(node.right);
+  updateHeight(node);
+}
+
+/**
+ * Find the deepest imbalanced node (post-order) and apply ONE rotation.
+ * Returns null if the tree is already balanced.
+ */
+export function avlFixStep(root: AVLNode | null): FixStepResult | null {
+  if (!root) return null;
+
+  // Clone the tree so we can mutate safely
+  const cloned = cloneAVL(root)!;
+
+  // Post-order traversal to find the deepest imbalanced node
+  let target: { node: AVLNode; parent: AVLNode | null; direction: "left" | "right" | "root" } | null = null;
+
+  const findDeepest = (
+    node: AVLNode | null,
+    parent: AVLNode | null,
+    dir: "left" | "right" | "root",
+  ) => {
+    if (!node) return;
+    findDeepest(node.left, node, "left");
+    findDeepest(node.right, node, "right");
+    if (Math.abs(getBalanceFactor(node)) > 1 && !target) {
+      target = { node, parent, direction: dir };
+    }
+  };
+
+  findDeepest(cloned, null, "root");
+
+  if (!target) return null;
+
+  const { node: imbalanced, parent, direction } = target;
+  const bf = getBalanceFactor(imbalanced);
+  let rotated: AVLNode;
+  let step: RotationStep;
+
+  if (bf > 1) {
+    // Left-heavy
+    const leftBf = getBalanceFactor(imbalanced.left);
+    if (leftBf >= 0) {
+      step = {
+        type: "LL",
+        node: imbalanced.value,
+        description: `Right rotation at node ${imbalanced.value} (LL case)`,
+      };
+      rotated = rotateRight(imbalanced);
+    } else {
+      step = {
+        type: "LR",
+        node: imbalanced.value,
+        description: `Left rotation at ${imbalanced.left!.value}, then right rotation at ${imbalanced.value} (LR case)`,
+      };
+      imbalanced.left = rotateLeft(imbalanced.left!);
+      rotated = rotateRight(imbalanced);
+    }
+  } else {
+    // Right-heavy
+    const rightBf = getBalanceFactor(imbalanced.right);
+    if (rightBf <= 0) {
+      step = {
+        type: "RR",
+        node: imbalanced.value,
+        description: `Left rotation at node ${imbalanced.value} (RR case)`,
+      };
+      rotated = rotateLeft(imbalanced);
+    } else {
+      step = {
+        type: "RL",
+        node: imbalanced.value,
+        description: `Right rotation at ${imbalanced.right!.value}, then left rotation at ${imbalanced.value} (RL case)`,
+      };
+      imbalanced.right = rotateRight(imbalanced.right!);
+      rotated = rotateLeft(imbalanced);
+    }
+  }
+
+  // Attach rotated subtree back
+  let newRoot: AVLNode;
+  if (direction === "root" || !parent) {
+    newRoot = rotated;
+  } else {
+    if (direction === "left") {
+      parent.left = rotated;
+    } else {
+      parent.right = rotated;
+    }
+    updateHeightsPostOrder(cloned);
+    newRoot = cloned;
+  }
+
+  return { newRoot, step };
+}

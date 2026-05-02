@@ -16,6 +16,8 @@ import {
 } from "@/lib/avl";
 import { layoutBinaryTree } from "@/lib/layout";
 import { TreeCanvas } from "@/components/TreeCanvas";
+import { AVLFixer } from "@/modules/AVLFixer";
+import { useTranslation } from "react-i18next";
 import {
   Plus,
   Trash2,
@@ -24,9 +26,15 @@ import {
   AlertCircle,
   CheckCircle2,
   History,
+  Hammer,
+  TreeDeciduous,
 } from "lucide-react";
 
+type AVLMode = "builder" | "fixer";
+
 export const AVLTree: React.FC = () => {
+  const { t } = useTranslation();
+  const [mode, setMode] = useState<AVLMode>("builder");
   const [avlRoot, setAvlRoot] = useState<AVLNode | null>(null);
   const [buildInput, setBuildInput] = useState("30,20,40,10,25,35,50");
   const [singleInput, setSingleInput] = useState("");
@@ -164,6 +172,43 @@ export const AVLTree: React.FC = () => {
   const layout = layoutBinaryTree(treeNode);
 
   return (
+    <div className="space-y-4">
+      {/* ─── Mode Toggle ─── */}
+      <div className="glass-card p-3 flex items-center gap-3">
+        <span className="text-[10px] uppercase text-[#a0a0a0] font-semibold" style={{ letterSpacing: "0.15em" }}>
+          {t("avlFixer.mode")}
+        </span>
+        <div className="flex gap-1">
+          <button
+            onClick={() => setMode("builder")}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-md inline-flex items-center gap-1.5 transition-all ${
+              mode === "builder"
+                ? "bg-white/15 text-white border border-white/20"
+                : "text-[#a0a0a0] hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <TreeDeciduous className="w-3.5 h-3.5" strokeWidth={1.5} />
+            {t("avlFixer.builder")}
+          </button>
+          <button
+            onClick={() => setMode("fixer")}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-md inline-flex items-center gap-1.5 transition-all ${
+              mode === "fixer"
+                ? "bg-white/15 text-white border border-white/20"
+                : "text-[#a0a0a0] hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <Hammer className="w-3.5 h-3.5" strokeWidth={1.5} />
+            {t("avlFixer.fixer")}
+          </button>
+        </div>
+      </div>
+
+      {/* ─── Fixer Mode ─── */}
+      {mode === "fixer" && <AVLFixer />}
+
+      {/* ─── Builder Mode ─── */}
+      {mode === "builder" && (
     <div className="grid lg:grid-cols-3 gap-4">
       {/* ─── Left Panel ─── */}
       <div className="lg:col-span-1 space-y-4">
@@ -360,6 +405,8 @@ export const AVLTree: React.FC = () => {
           emptyHint="Build an AVL tree to see it here."
         />
       </div>
+    </div>
+      )}
     </div>
   );
 };

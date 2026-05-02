@@ -1,6 +1,6 @@
-# Shadcn-UI Template Usage Instructions
+# Tree Algorithms Lab
 
-## technology stack
+## Technology Stack
 
 This project is built with:
 
@@ -10,8 +10,6 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-All shadcn/ui components have been downloaded under `@/components/ui`.
-
 ## File Structure
 
 - `index.html` - HTML entry point
@@ -20,7 +18,7 @@ All shadcn/ui components have been downloaded under `@/components/ui`.
 - `package.json` - NPM dependencies and scripts
 - `src/main.tsx` - Project entry point
 - `src/App.tsx` - Router shell (imports pages and sets up routes)
-- `src/pages/Index.tsx` - Main page entry point for `/` by default; replace the placeholder page here unless you explicitly reroute `/` elsewhere
+- `src/pages/Index.tsx` - Main page entry point
 - `src/index.css` - Existing CSS configuration
 
 ## Components
@@ -36,15 +34,12 @@ All shadcn/ui components have been downloaded under `@/components/ui`.
 
 - Import components from `@/components/ui` in your React components
 - Customize the UI by modifying the Tailwind configuration
-- Do not stop after editing isolated components or only `src/App.tsx`. The default template homepage lives in `src/pages/Index.tsx`, and leaving `Welcome to Atoms` there means the app is still unfinished.
-- Completion check: either replace `src/pages/Index.tsx` with your real homepage, or update the `/` route in `src/App.tsx` so the live homepage no longer renders the default placeholder page.
 
 ## Note
 
 - The `@/` path alias points to the `src/` directory
-- Do NOT modify `index.html` — the title, description, and logo use environment variable placeholders (`%VITE_APP_TITLE%`, etc.) that are configured at deployment time.
 
-# Commands
+## Commands
 
 **Install Dependencies**
 
