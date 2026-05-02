@@ -19,7 +19,8 @@ export type LabTab =
   | "traversal"
   | "reconstruct"
   | "numeric"
-  | "symbolic";
+  | "symbolic"
+  | "avl";
 
 export interface ComplexityRow {
   /** e.g. "Search (average)" */
@@ -748,6 +749,164 @@ function postorder(n) { if(!n) return; postorder(n.left); postorder(n.right); vi
     applications: [
       { en: "Computer algebra systems (CAS).", ar: "أنظمة الجبر الحاسوبي (CAS)." },
       { en: "Symbolic math in teaching tools.", ar: "الرياضيات الرمزية في الأدوات التعليمية." },
+    ],
+  },
+
+  // ─────────────────────────────────────────────────────────
+  // LECTURE 9 — AVL Trees
+  // ─────────────────────────────────────────────────────────
+  {
+    id: "avl-trees",
+    number: 9,
+    title: {
+      en: "AVL Trees — Self-Balancing Binary Search Trees",
+      ar: "أشجار AVL — أشجار البحث الثنائية ذاتية التوازن",
+    },
+    summary: {
+      en: "Height-balanced BSTs with automatic rotations to guarantee O(log n) operations.",
+      ar: "أشجار BST متوازنة الارتفاع مع دورانات تلقائية لضمان عمليات O(log n).",
+    },
+    tag: { en: "AVL", ar: "AVL" },
+    accent: "purple",
+    labTab: "avl",
+    sections: [
+      {
+        heading: { en: "What is an AVL Tree?", ar: "ما هي شجرة AVL؟" },
+        paragraphs: [
+          {
+            en: "An AVL tree (named after Adelson-Velsky and Landis, 1962) is a self-balancing binary search tree. For every node, the heights of its left and right subtrees differ by at most 1. This balance constraint guarantees that the tree height is always O(log n), ensuring efficient search, insert, and delete operations.",
+            ar: "شجرة AVL (سُمّيت نسبةً إلى أديلسون-فيلسكي ولانديس، 1962) هي شجرة بحث ثنائية ذاتية التوازن. لكل عقدة، يختلف ارتفاع الشجرتين الفرعيتين اليسرى واليمنى بـ 1 كحدٍّ أقصى. هذا القيد يضمن أن ارتفاع الشجرة دائماً O(log n)، ممّا يكفل كفاءة عمليات البحث والإدراج والحذف.",
+          },
+        ],
+      },
+      {
+        heading: { en: "Balance Factor", ar: "عامل التوازن (Balance Factor)" },
+        paragraphs: [
+          {
+            en: "The balance factor (BF) of a node is defined as: BF = height(left subtree) − height(right subtree). In a valid AVL tree, every node must have BF ∈ {-1, 0, +1}. When an insertion or deletion causes any node's BF to become +2 or -2, a rotation is performed to restore balance.",
+            ar: "عامل التوازن (BF) لعقدة يُعرَّف بـ: BF = ارتفاع(الشجرة اليسرى) − ارتفاع(الشجرة اليمنى). في شجرة AVL صالحة، يجب أن يكون BF لكل عقدة ∈ {-1, 0, +1}. عندما يتسبّب إدراج أو حذف في جعل BF لأي عقدة +2 أو -2، يُجرى دوران لاستعادة التوازن.",
+          },
+        ],
+      },
+      {
+        heading: { en: "Rotations", ar: "الدورانات (Rotations)" },
+        paragraphs: [
+          {
+            en: "AVL trees use four types of rotations to restore balance after insertions or deletions:",
+            ar: "تستخدم أشجار AVL أربعة أنواع من الدورانات لاستعادة التوازن بعد الإدراج أو الحذف:",
+          },
+        ],
+        bullets: [
+          {
+            en: "LL (Left-Left) — single right rotation: the imbalance is in the left child's left subtree.",
+            ar: "LL (يسار-يسار) — دوران يميني واحد: الاختلال في الشجرة اليسرى للابن الأيسر.",
+          },
+          {
+            en: "RR (Right-Right) — single left rotation: the imbalance is in the right child's right subtree.",
+            ar: "RR (يمين-يمين) — دوران يساري واحد: الاختلال في الشجرة اليمنى للابن الأيمن.",
+          },
+          {
+            en: "LR (Left-Right) — double rotation (left then right): the imbalance is in the left child's right subtree.",
+            ar: "LR (يسار-يمين) — دوران مزدوج (يساري ثم يميني): الاختلال في الشجرة اليمنى للابن الأيسر.",
+          },
+          {
+            en: "RL (Right-Left) — double rotation (right then left): the imbalance is in the right child's left subtree.",
+            ar: "RL (يمين-يسار) — دوران مزدوج (يميني ثم يساري): الاختلال في الشجرة اليسرى للابن الأيمن.",
+          },
+        ],
+        code: `// Right rotation (LL case)
+function rotateRight(y) {
+  const x = y.left;
+  y.left = x.right;
+  x.right = y;
+  updateHeight(y);
+  updateHeight(x);
+  return x;
+}
+
+// Left rotation (RR case)
+function rotateLeft(x) {
+  const y = x.right;
+  x.right = y.left;
+  y.left = x;
+  updateHeight(x);
+  updateHeight(y);
+  return y;
+}`,
+      },
+      {
+        heading: { en: "Insertion", ar: "الإدراج" },
+        paragraphs: [
+          {
+            en: "Insert like a standard BST. After insertion, walk back up the path to the root, updating heights and checking balance factors. If any node becomes unbalanced (BF = ±2), apply the appropriate rotation (LL, RR, LR, or RL) based on where the new node was inserted relative to the unbalanced node.",
+            ar: "أدرج كما في BST العادية. بعد الإدراج، ارجع صعوداً إلى الجذر مع تحديث الارتفاعات وفحص عوامل التوازن. إذا أصبحت أي عقدة غير متوازنة (BF = ±2)، طبّق الدوران المناسب (LL أو RR أو LR أو RL) بناءً على موقع العقدة الجديدة بالنسبة للعقدة غير المتوازنة.",
+          },
+        ],
+        code: `function avlInsert(node, value) {
+  // 1. Standard BST insert
+  if (!node) return new AVLNode(value);
+  if (value < node.value) node.left = avlInsert(node.left, value);
+  else if (value > node.value) node.right = avlInsert(node.right, value);
+  else return node; // duplicate
+
+  // 2. Update height
+  updateHeight(node);
+
+  // 3. Check balance and rotate if needed
+  const bf = balanceFactor(node);
+  if (bf > 1 && value < node.left.value) return rotateRight(node);       // LL
+  if (bf < -1 && value > node.right.value) return rotateLeft(node);      // RR
+  if (bf > 1 && value > node.left.value) {                               // LR
+    node.left = rotateLeft(node.left);
+    return rotateRight(node);
+  }
+  if (bf < -1 && value < node.right.value) {                             // RL
+    node.right = rotateRight(node.right);
+    return rotateLeft(node);
+  }
+  return node;
+}`,
+      },
+      {
+        heading: { en: "Deletion", ar: "الحذف" },
+        paragraphs: [
+          {
+            en: "Delete like a standard BST (3 cases: leaf, one child, two children with inorder successor). After deletion, walk back up updating heights and rebalancing with rotations as needed. The rotation case is determined by the balance factor of the unbalanced node and its heavier child.",
+            ar: "احذف كما في BST العادية (3 حالات: ورقة، ابن واحد، ابنان مع inorder successor). بعد الحذف، ارجع صعوداً مع تحديث الارتفاعات وإعادة التوازن بالدورانات حسب الحاجة. يُحدَّد نوع الدوران بعامل التوازن للعقدة غير المتوازنة وابنها الأثقل.",
+          },
+        ],
+      },
+      {
+        heading: { en: "Complexity", ar: "التعقيد" },
+        paragraphs: [
+          {
+            en: "Because the AVL tree maintains a height of O(log n), all primary operations (search, insert, delete) run in O(log n) time in both average and worst cases. This is a significant improvement over plain BSTs, which can degrade to O(n) in the worst case (skewed tree).",
+            ar: "بما أن شجرة AVL تحافظ على ارتفاع O(log n)، فإن جميع العمليات الأساسية (البحث، الإدراج، الحذف) تعمل في O(log n) في الحالة المتوسطة والأسوأ. هذا تحسّن كبير مقارنة بـ BST العادية التي قد تتدهور إلى O(n) في أسوأ حالة (شجرة منحرفة).",
+          },
+        ],
+      },
+    ],
+    complexity: [
+      { label: { en: "Search", ar: "البحث" }, time: "O(log n)", space: "O(log n)" },
+      { label: { en: "Insert", ar: "الإدراج" }, time: "O(log n)", space: "O(log n)" },
+      { label: { en: "Delete", ar: "الحذف" }, time: "O(log n)", space: "O(log n)" },
+      { label: { en: "Traversal", ar: "الجولة" }, time: "O(n)", space: "O(n)" },
+    ],
+    examples: [
+      {
+        en: "Inserting [30, 20, 10] into an empty AVL tree: after inserting 10, node 30 has BF=+2 (LL case). A right rotation at 30 produces root=20, left=10, right=30 — balanced.",
+        ar: "إدراج [30, 20, 10] في شجرة AVL فارغة: بعد إدراج 10، العقدة 30 لها BF=+2 (حالة LL). دوران يميني عند 30 يُنتج جذر=20، أيسر=10، أيمن=30 — متوازنة.",
+      },
+      {
+        en: "Inserting [10, 20, 15] triggers an RL case at node 10: first right-rotate at 20, then left-rotate at 10, yielding root=15, left=10, right=20.",
+        ar: "إدراج [10, 20, 15] يُحفّز حالة RL عند العقدة 10: أولاً دوران يميني عند 20، ثم دوران يساري عند 10، والنتيجة جذر=15، أيسر=10، أيمن=20.",
+      },
+    ],
+    applications: [
+      { en: "Database indexing where guaranteed O(log n) lookups are required.", ar: "فهرسة قواعد البيانات حيث يُطلب بحث مضمون O(log n)." },
+      { en: "Memory allocators and interval scheduling.", ar: "مخصّصات الذاكرة وجدولة الفترات." },
+      { en: "In-memory ordered dictionaries and sets.", ar: "القواميس والمجموعات المرتّبة في الذاكرة." },
+      { en: "Compilers — symbol tables with balanced lookup.", ar: "المُصرِّفات — جداول الرموز مع بحث متوازن." },
     ],
   },
 ];

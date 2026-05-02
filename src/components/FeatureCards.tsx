@@ -7,6 +7,7 @@ import {
   Puzzle,
   Calculator,
   Sigma,
+  Scale,
   ArrowRight,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,7 @@ const FEATURES: { key: string; value: string; icon: React.ElementType }[] = [
   { key: "reconstruct", value: "reconstruct", icon: Puzzle },
   { key: "numeric", value: "numeric", icon: Calculator },
   { key: "symbolic", value: "symbolic", icon: Sigma },
+  { key: "avl", value: "avl", icon: Scale },
 ];
 
 export const FeatureCards: React.FC<FeatureCardsProps> = ({ onNavigate }) => {

@@ -9,6 +9,7 @@ import { MAryConverter } from "@/modules/MAryConverter";
 import { NumericExpressionTree } from "@/modules/NumericExpressionTree";
 import { SymbolicExpressionTree } from "@/modules/SymbolicExpressionTree";
 import { TreeReconstructor } from "@/modules/TreeReconstructor";
+import { AVLTree } from "@/modules/AVLTree";
 import { DownloadBackend } from "@/components/DownloadBackend";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -19,6 +20,7 @@ import {
   Calculator,
   Sigma,
   Puzzle,
+  Scale,
   Instagram,
   GraduationCap,
 } from "lucide-react";
@@ -42,6 +44,7 @@ const TAB_KEYS = [
   { value: "reconstruct", step: "04", icon: Puzzle },
   { value: "numeric", step: "05", icon: Calculator },
   { value: "symbolic", step: "06", icon: Sigma },
+  { value: "avl", step: "07", icon: Scale },
 ] as const;
 
 const VALID_TABS = TAB_KEYS.map((t) => t.value) as readonly string[];
@@ -226,6 +229,9 @@ const Index: React.FC = () => {
             </TabsContent>
             <TabsContent value="symbolic" className="animate-fade-in-up">
               <SymbolicExpressionTree />
+            </TabsContent>
+            <TabsContent value="avl" className="animate-fade-in-up">
+              <AVLTree />
             </TabsContent>
           </div>
         </Tabs>

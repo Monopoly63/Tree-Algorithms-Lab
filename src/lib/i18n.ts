@@ -31,6 +31,7 @@ const resources = {
         reconstruct: "Reconstruct Tree",
         numeric: "Numeric Expression",
         symbolic: "Symbolic Expression",
+        avl: "AVL Tree",
       },
       breadcrumb: {
         home: "Home",
@@ -148,6 +149,7 @@ const resources = {
         reconstruct: "إعادة بناء الشجرة",
         numeric: "تعبير رقمي",
         symbolic: "تعبير رمزي",
+        avl: "شجرة AVL",
       },
       breadcrumb: {
         home: "الرئيسية",
