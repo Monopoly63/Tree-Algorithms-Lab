@@ -909,6 +909,122 @@ function rotateLeft(x) {
       { en: "Compilers — symbol tables with balanced lookup.", ar: "المُصرِّفات — جداول الرموز مع بحث متوازن." },
     ],
   },
+
+  // ─── Lecture 10: Splay Trees ──────────────────────────────────
+  {
+    id: "lecture-7-splay",
+    number: 10,
+    title: {
+      en: "Lecture 7: Splay Trees — Self-Adjusting BSTs",
+      ar: "المحاضرة 7: الأشجار المنفردة وتعديل التوازن (Splay Tree)",
+    },
+    summary: {
+      en: "Self-adjusting binary search trees that move recently accessed elements to the root via splaying rotations (Zig, Zig-Zig, Zig-Zag).",
+      ar: "أشجار بحث ثنائية ذاتية التعديل تنقل العناصر المزارة مؤخراً إلى الجذر عبر عمليات الدوران المنفردة (Zig, Zig-Zig, Zig-Zag).",
+    },
+    tag: { en: "Splay Tree", ar: "الأشجار المنفردة" },
+    accent: "purple",
+    sections: [
+      {
+        heading: { en: "Core Concept of Splaying", ar: "المفهوم الأساسي للـ Splaying" },
+        paragraphs: [
+          {
+            en: "Unlike AVL trees that strictly maintain balance factors at every node, Splay Trees perform restructuring whenever an element is accessed (search, insert, delete). The accessed node is rotated all the way to the root.",
+            ar: "على عكس أشجار AVL التي تحافظ بصرامة على عامل التوازن عند كل عقدة، تقوم أشجار Splay بإعادة الهيكلة كلما تم الوصول لعنصر (بحث، إدراج، حذف). يتم تدوير العقدة المزارة حتى تصل إلى الجذر.",
+          },
+          {
+            en: "This property guarantees temporal locality (cache effect): recently accessed elements can be retrieved in O(1) time on subsequent lookups.",
+            ar: "تضمن هذه الخاصية المحلية الزمنية (تأثير الكاش): العناصر التي تم الوصول إليها مؤخراً يمكن استرجاعها في زمن O(1) في المرات القادمة.",
+          },
+        ],
+        code: `// Splay Tree Rotation Cases\n1. Zig Case: Single right/left rotation when parent is root.\n2. Zig-Zig Case: Double right/left rotation when node and parent are same side.\n3. Zig-Zag Case: Double rotation (left then right or vice versa).`,
+      },
+    ],
+    complexity: [
+      { label: { en: "Amortized Search", ar: "البحث المُطفأ" }, time: "O(log n)", space: "O(1)" },
+      { label: { en: "Worst-Case Search", ar: "أسوأ حالة للبحث" }, time: "O(n)", space: "O(1)" },
+    ],
+    examples: [
+      {
+        en: "Accessing leaf node 10 in a skewed left chain [30->20->10] triggers a Zig-Zig rotation, bringing 10 to the root and halving the depth of the remaining tree.",
+        ar: "الوصول للعقدة الورقية 10 في سلسلة يسارية منحرفة [30<-20<-10] يُفعّل دوران Zig-Zig، مما ينقل 10 للجذر ويقلص عمق باقي الشجرة للنصف.",
+      },
+    ],
+    applications: [
+      { en: "Network routers — IP routing tables with frequent destination caching.", ar: "موجّهات الشبكات — جداول التوجيه مع كاش العناوين المتكررة." },
+      { en: "Garbage collection and memory cache management.", ar: "تجميع المهملات وإدارة ذاكرة التخزين المؤقت." },
+    ],
+  },
+
+  // ─── Lecture 11: Red-Black Trees ──────────────────────────────
+  {
+    id: "lecture-8-redblack",
+    number: 11,
+    title: {
+      en: "Lecture 8: Red-Black Trees — Properties & Balancing",
+      ar: "المحاضرة 8: الشجرة الحمراء والسوداء وشروط التوازن (Red-Black Tree)",
+    },
+    summary: {
+      en: "Self-balancing binary search tree where each node stores an extra color bit (red or black) to guarantee O(log n) height.",
+      ar: "شجرة بحث ثنائية ذاتية التوازن تخزّن كل عقدة فيها بت تلوين إضافي (أحمر أو أسود) لضمان ارتفاع تقريبي O(log n).",
+    },
+    tag: { en: "Red-Black", ar: "أحمر-أسود" },
+    accent: "pink",
+    sections: [
+      {
+        heading: { en: "The 5 Red-Black Invariants", ar: "الخصائص الخمس الأساسية للشجرة الحمراء والسوداء" },
+        paragraphs: [
+          {
+            en: "1. Every node is either red or black.\n2. The root is always black.\n3. All external null leaves (NIL) are considered black.\n4. If a node is red, both of its children must be black (no adjacent red nodes).\n5. Every simple path from a node to any descendant leaf contains the same number of black nodes (black-height).",
+            ar: "1. كل عقدة إما حمراء أو سوداء.\n2. الجذر دائماً أسود.\n3. جميع الأوراق المنعدمة (NIL) تُعتبر سوداء.\n4. إذا كانت العقدة حمراء، فيجب أن يكون كلا طفليها باللون الأسود (يمنع تجاور عقدتين حمراوين).\n5. كل مسار بسيط من عقدة إلى أوراقها يحتوي على نفس العدد من العقد السوداء (الارتفاع الأسود).",
+          },
+        ],
+        code: `def insertRB(root, node):\n    bstInsert(root, node)\n    node.color = RED\n    fixRedBlackProperties(node) // Recoloring & Rotations`,
+      },
+    ],
+    complexity: [
+      { label: { en: "Search", ar: "البحث" }, time: "O(log n)", space: "O(1)" },
+      { label: { en: "Insert & Delete", ar: "الإدراج والحذف" }, time: "O(log n)", space: "O(1)" },
+    ],
+    examples: [
+      {
+        en: "Inserting a red node whose parent and uncle are both red: recolor parent and uncle to black, recolor grandparent to red, and push checking up.",
+        ar: "إدراج عقدة حمراء يكون أبوها وعمها باللون الأحمر: يتم إعادة تلوين الأب والعم للأسود، وتلوين الجد للأحمر، ومتابعة الفحص للأعلى.",
+      },
+    ],
+    applications: [
+      { en: "C++ Standard Template Library (STL) — std::map and std::set.", ar: "مكتبة القوالب القياسية في C++ (STL) — هيكل std::map و std::set." },
+      { en: "Linux Kernel — Complete Fair Scheduler (CFS) virtual runtime tracking.", ar: "نواة لينكس — جدولة العمليات العادلة (CFS) وتتبع زمن التنفيذ." },
+    ],
+  },
+
+  // ─── Lecture 12: Practical Exam Code ──────────────────────────
+  {
+    id: "lecture-9-exam-code",
+    number: 12,
+    title: {
+      en: "Practical Exam Complete Code Reference",
+      ar: "مرجع كود الامتحان العملي الشامل لخوارزميات الأشجار",
+    },
+    summary: {
+      en: "Unabridged reference code for the practical exam implementing BST, AVL balancing, Splay rotations, and tree traversals.",
+      ar: "الكود الكامل المعتمد للامتحان العملي، يغطي بناء شجرة البحث الثنائية، توازن AVL، عمليات دوران Splay، والجولات الشجرية.",
+    },
+    tag: { en: "Exam Code", ar: "كود الامتحان" },
+    accent: "cyan",
+    sections: [
+      {
+        heading: { en: "Complete Practical Implementation", ar: "التنفيذ العملي المتكامل" },
+        paragraphs: [
+          {
+            en: "This complete code snippet represents the standard practical exam solution tested in university computer labs.",
+            ar: "يمثل هذا الكود الشامل الحل القياسي المعتمد للامتحان العملي المُختبر في المعامل الجامعية.",
+          },
+        ],
+        code: `// Algorithms 4 Practical Exam Reference Code\n#include <iostream>\n#include <algorithm>\nusing namespace std;\n\nstruct Node {\n    int key;\n    Node *left, *right;\n    int height;\n    Node(int k): key(k), left(nullptr), right(nullptr), height(1) {}\n};\n\nint height(Node* N) { return N ? N->height : 0; }\nint getBalance(Node* N) { return N ? height(N->left) - height(N->right) : 0; }\n\nNode* rightRotate(Node* y) {\n    Node* x = y->left;\n    Node* T2 = x->right;\n    x->right = y; y->left = T2;\n    y->height = max(height(y->left), height(y->right)) + 1;\n    x->height = max(height(x->left), height(x->right)) + 1;\n    return x;\n}\n\nNode* insert(Node* node, int key) {\n    if (!node) return new Node(key);\n    if (key < node->key) node->left = insert(node->left, key);\n    else if (key > node->key) node->right = insert(node->right, key);\n    else return node;\n    \n    node->height = 1 + max(height(node->left), height(node->right));\n    int balance = getBalance(node);\n    \n    if (balance > 1 && key < node->left->key) return rightRotate(node);\n    return node;\n}\n\nvoid inorder(Node* root) {\n    if (!root) return;\n    inorder(root->left);\n    cout << root->key << " ";\n    inorder(root->right);\n}\n\nint main() {\n    Node* root = nullptr;\n    for (int k : {30, 20, 40, 10, 25, 35, 50}) root = insert(root, k);\n    cout << "Inorder Traversal: "; inorder(root);\n    return 0;\n}`,
+      },
+    ],
+  },
 ];
 
 /** Get a lecture by its id. */
