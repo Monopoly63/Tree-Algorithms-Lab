@@ -10,6 +10,8 @@ import { NumericExpressionTree } from "@/modules/NumericExpressionTree";
 import { SymbolicExpressionTree } from "@/modules/SymbolicExpressionTree";
 import { TreeReconstructor } from "@/modules/TreeReconstructor";
 import { AVLTree } from "@/modules/AVLTree";
+import { SplayTree } from "@/modules/SplayTree";
+import { RedBlackTree } from "@/modules/RedBlackTree";
 import { DownloadBackend } from "@/components/DownloadBackend";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -21,6 +23,8 @@ import {
   Sigma,
   Puzzle,
   Scale,
+  Sparkles,
+  ShieldAlert,
   Instagram,
   GraduationCap,
 } from "lucide-react";
@@ -45,6 +49,8 @@ const TAB_KEYS = [
   { value: "numeric", step: "05", icon: Calculator },
   { value: "symbolic", step: "06", icon: Sigma },
   { value: "avl", step: "07", icon: Scale },
+  { value: "splay", step: "08", icon: Sparkles },
+  { value: "rbtree", step: "09", icon: ShieldAlert },
 ] as const;
 
 const VALID_TABS = TAB_KEYS.map((t) => t.value) as readonly string[];
@@ -232,6 +238,12 @@ const Index: React.FC = () => {
             </TabsContent>
             <TabsContent value="avl" className="animate-fade-in-up">
               <AVLTree />
+            </TabsContent>
+            <TabsContent value="splay" className="animate-fade-in-up">
+              <SplayTree />
+            </TabsContent>
+            <TabsContent value="rbtree" className="animate-fade-in-up">
+              <RedBlackTree />
             </TabsContent>
           </div>
         </Tabs>

@@ -6,7 +6,7 @@ export interface TreeNode {
   value: string;
   left: TreeNode | null;
   right: TreeNode | null;
-  kind?: "operator" | "operand" | "default";
+  kind?: "operator" | "operand" | "default" | "red" | "black" | "splay";
 }
 
 export interface MaryNode {

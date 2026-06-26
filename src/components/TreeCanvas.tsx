@@ -113,6 +113,9 @@ function fillFor(
 ): string {
   if (highlighted) return palette.nodeFillHighlight;
   if (selected) return palette.nodeFillSelected;
+  if (kind === "red") return "rgba(239, 68, 68, 0.85)";
+  if (kind === "black") return "rgba(30, 41, 59, 0.95)";
+  if (kind === "splay") return "rgba(168, 85, 247, 0.85)";
   if (kind === "operator") return palette.nodeFillOperator;
   if (kind === "operand") return palette.nodeFillOperand;
   return palette.nodeFill;
@@ -120,11 +123,15 @@ function fillFor(
 
 function strokeFor(
   palette: Palette,
+  kind: string | undefined,
   highlighted: boolean,
   selected: boolean,
 ): string {
   if (highlighted) return palette.nodeStrokeHighlight;
   if (selected) return palette.nodeStrokeSelected;
+  if (kind === "red") return "#f87171";
+  if (kind === "black") return "#64748b";
+  if (kind === "splay") return "#c084fc";
   return palette.nodeStroke;
 }
 
@@ -209,7 +216,7 @@ export const TreeCanvas: React.FC<TreeCanvasProps> = ({
           const highlighted = highlightedIds?.has(n.id) ?? false;
           const selected = selectedId === n.id;
           const fill = fillFor(palette, n.kind, highlighted, selected);
-          const stroke = strokeFor(palette, highlighted, selected);
+          const stroke = strokeFor(palette, n.kind, highlighted, selected);
           const strokeW = strokeWidthFor(highlighted, selected);
 
           return (
